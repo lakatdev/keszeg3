@@ -31,6 +31,7 @@ fun main(args: Array<String>) {
     var data = buffer.toKString().replace("\t"," ").replace("[ ]{2,}".toRegex(), " ").replace("\n ", "\n")
     var lines = ArrayList(data.replace("\r", "\n").split("\n"))
 
+    lines = precompile(lines)
     lines = processFlags(lines)
     processCode(lines)
 
@@ -114,11 +115,11 @@ private fun invalidToken(token: String): Boolean {
     return !special.matches(token)
 }
 
-private fun checkTokensList(tokens: ArrayList<String>, lineId: Int) {
+private fun checkTokensList(tokens: ArrayList<String>) {
     tokens.forEach {
         if (invalidToken(it)) {
             if (!(tokens[0] == "print" && tokens[1] == "string")) {
-                error("ERROR: Invalid token at line:" + (lineId + 1))
+                error("ERROR: Invalid token")
             }
         }
     }
@@ -157,7 +158,7 @@ private fun save(path: String) {
 private fun processFlags(lines: ArrayList<String>): ArrayList<String> {
     lines.forEachIndexed { index, it ->
         val tokens = ArrayList<String>(it.split(" "))
-        checkTokensList(tokens, index)
+        checkTokensList(tokens)
 
         if (tokens[0] == "flag") {
             Variables.flags.add(Flag(tokens[1], index))
@@ -172,10 +173,54 @@ private fun processFlags(lines: ArrayList<String>): ArrayList<String> {
     return lines
 }
 
+private fun findEnd(lines: ArrayList<String>, position: Int): Int {
+    var newifs = 1
+    var seekPosition = position + 1
+
+    while (newifs > 0) {
+        seekPosition++
+        var tokens = ArrayList<String>(lines[seekPosition].split(" "))
+
+        if (tokens[0] == "if" || tokens[0] == "while") {
+            newifs++
+        }
+
+        if (tokens[0] == "end") {
+            newifs--
+        }
+    }
+    return seekPosition
+}
+
+private fun precompile(lines: ArrayList<String>): ArrayList<String> {
+    var ret = lines
+
+    ret.forEachIndexed { index, it ->
+        var tokens = ArrayList<String>(it.split(" "))
+        checkTokensList(tokens)
+
+        when (tokens[0]) {
+            "while" -> {
+                val generatedFlag = Variables.newFlag()
+
+                tokens[0] = "if"
+                ret[index] = tokens.joinToString(separator = " ")
+                ret.add(index, "flag " + generatedFlag)
+
+                ret.add(findEnd(ret, index), "jump " + generatedFlag)
+
+                precompile(ret)
+            }
+        }
+    }
+
+    return ret
+}
+
 private fun processCode(lines: ArrayList<String>) {
-    lines.forEachIndexed { index, it ->
+    lines.forEach {
         val tokens = ArrayList<String>(it.split(" "))
-        checkTokensList(tokens, index)
+        checkTokensList(tokens)
 
         handleLine(tokens)
     }

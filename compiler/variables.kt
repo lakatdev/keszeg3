@@ -1,10 +1,19 @@
 class Flag(var name: String, var position: Int)
+class ReplaceInstruction(var type: String, var position: Int)
 
 @ThreadLocal
 object Variables {
 
     private var arrs = ArrayList<String>()
     private var vars = ArrayList<String>()
+
+    private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private fun randomString(length: Int): String{
+        return (1..length)
+            .map { _ -> kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
+    }
 
     var flags = ArrayList<Flag>()
 
@@ -28,6 +37,18 @@ object Variables {
 
     fun getArrayCount(): Int {
         return arrs.size
+    }
+
+    fun newFlag(): String {
+        var proposedName = randomString(20)
+
+        flags.forEach {
+            if (it.name == proposedName) {
+                return newFlag()
+            }
+        }
+
+        return proposedName
     }
 
     fun setFlag(name: String, position: Int) {
