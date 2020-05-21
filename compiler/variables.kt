@@ -1,5 +1,4 @@
 class Flag(var name: String, var position: Int)
-class ReplaceInstruction(var type: String, var position: Int)
 
 @ThreadLocal
 object Variables {
