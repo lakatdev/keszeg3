@@ -13,7 +13,7 @@ private fun error(msg: String) {
 
 fun main(args: Array<String>) {
     if (args.size < 2) {
-        error("Please provide the sufficient amount of arguments!")
+        error("Provide sufficient amount of arguments!")
     }
 
     var file = fopen(args[0], "r")
