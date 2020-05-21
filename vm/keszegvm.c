@@ -521,6 +521,7 @@ void execute(instruction* instruction) {
             memcpy(str, &arguments[instruction->args], instruction->argsize);
             str[instruction->argsize] = '\0';
             printf(str);
+            free(str);
 
             break;
         }
@@ -656,6 +657,15 @@ void execute(instruction* instruction) {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
 
             execution_state = *c1 - 1;
+            break;
+        }
+        case (EXEC): {
+            char* str = malloc(instruction->argsize + 1);
+            memcpy(str, &arguments[instruction->args], instruction->argsize);
+            str[instruction->argsize] = '\0';
+            system(str);
+            free(str);
+
             break;
         }
     }

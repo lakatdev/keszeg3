@@ -566,5 +566,14 @@ private fun handleLine(tokens: ArrayList<String>) {
         "free" -> {
             addInstruction(Constants.FREE_ARRAY, 4u, addIntArguments(intArrayOf(Variables.getArrayId(tokens[1]))))
         }
+
+        "exec" -> {
+            var strToPrint = tokens[1]
+            for (i in 2 until tokens.size) {
+                strToPrint += (" " + tokens[i])
+            }
+            val stringInBytes = convertCharacters(strToPrint).encodeToByteArray().toUByteArray()
+            addInstruction(Constants.EXEC, stringInBytes.size.toUShort(), addBytesArgument(stringInBytes))
+        }
     }
 }

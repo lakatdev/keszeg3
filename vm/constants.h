@@ -93,4 +93,6 @@
 
 #define FREE_ARRAY 0x43
 
+#define EXEC 0x44
+
 #endif

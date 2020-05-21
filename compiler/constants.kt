@@ -92,4 +92,6 @@ object Constants {
     val JUMP: UShort = 0x1u
 
     val FREE_ARRAY: UShort = 0x43u
+
+    val EXEC: UShort = 0x44u
 }
