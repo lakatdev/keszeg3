@@ -39,7 +39,8 @@
 #define ADD_VN 0x1E
 #define ADD_VV 0x1F
 
-#define ARRAY 0x20
+#define ARRAY_N 0x20
+#define ARRAY_V 0x45
 
 #define SUB_NN 0x21
 #define SUB_NV 0x22

@@ -28,8 +28,14 @@ fun main(args: Array<String>) {
     }
     fclose(file)
 
-    var data = buffer.toKString().replace("\t"," ").replace("[ ]{2,}".toRegex(), " ").replace("\n ", "\n")
-    var lines = ArrayList(data.replace("\r", "\n").split("\n"))
+    var data = buffer.toKString()
+        .replace("\t"," ")
+        .replace("\r", "\n")
+        .replace("[ ]{2,}".toRegex(), " ")
+        .replace("[\n]{2,}".toRegex(), "\n")
+        .replace("\n ", "\n")
+
+    var lines = ArrayList(data.split("\n"))
 
     lines = precompile(lines)
     lines = processFlags(lines)
@@ -221,7 +227,6 @@ private fun processCode(lines: ArrayList<String>) {
     lines.forEach {
         val tokens = ArrayList<String>(it.split(" "))
         checkTokensList(tokens)
-
         handleLine(tokens)
     }
 }
@@ -375,7 +380,12 @@ private fun handleLine(tokens: ArrayList<String>) {
         }
 
         "array" -> {
-            addInstruction(Constants.ARRAY, 8u, addIntArguments(intArrayOf(Variables.getArrayId(tokens[1]), tokens[2].toInt())))
+            if (tokens[2].isNumber()) {
+                addInstruction(Constants.ARRAY_N, 8u, addIntArguments(intArrayOf(Variables.getArrayId(tokens[1]), tokens[2].toInt())))
+            }
+            else {
+                addInstruction(Constants.ARRAY_V, 8u, addIntArguments(intArrayOf(Variables.getArrayId(tokens[1]), Variables.getVarId(tokens[2]))))
+            }
         }
 
         "sub" -> {

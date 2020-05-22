@@ -369,11 +369,19 @@ void execute(instruction* instruction) {
 
             break;
         }
-        case (ARRAY): {
+        case (ARRAY_N): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
 
             arrays[*c1] = malloc(sizeof(int) * *c2);
+
+            break;
+        }
+        case (ARRAY_V): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+
+            arrays[*c1] = malloc(sizeof(int) * variables[*c2]);
 
             break;
         }

@@ -39,7 +39,8 @@ object Constants {
     val ADD_VN: UShort = 0x1Eu
     val ADD_VV: UShort = 0x1Fu
 
-    val ARRAY: UShort = 0x20u
+    val ARRAY_N: UShort = 0x20u
+    val ARRAY_V: UShort = 0x45u
 
     val SUB_NN: UShort = 0x21u
     val SUB_NV: UShort = 0x22u
