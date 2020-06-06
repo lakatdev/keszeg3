@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "constants.h"
+#include "../constants.h"
 
 typedef struct {
     unsigned short type;
@@ -19,10 +19,16 @@ int execution_state = 0;
 
 void execute(instruction*);
 
+/*
+    Convert byte pointer to int pointer
+*/
 int* parse_int_pointer(char* bytes) {
     return (int*)bytes;
 }
 
+/*
+    Finds the end of the "if" statement
+*/
 int findEnd() {
     int newifs = 1;
     int seek_position = execution_state;
@@ -41,6 +47,10 @@ int findEnd() {
     return seek_position;
 }
 
+/*
+    Main function
+    Reads input file and sends it for execution
+*/
 int main(int argc, char** argv) {
     if (argc < 2) {
         printf("Provide sufficient amount of arguments!\n");
@@ -77,6 +87,9 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+/*
+    Executes given instruction
+*/
 void execute(instruction* instruction) {
     switch (instruction->type) {
         case (SET_N): {
