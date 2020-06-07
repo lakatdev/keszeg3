@@ -526,8 +526,8 @@ void handle_line(line_t* line) {
         }
         else if (memcmp("ascii", mode, mode_length) == 0) {
             if (is_number(line->data[2].data, line->data[2].length)) {
-                int args = to_int(insert_null(line->data[2].data, line->data[2].length));
-                add_instruction(PRINT_ASCII_N, 4, add_int_arguments(&args, 1));
+                char args = to_int(insert_null(line->data[2].data, line->data[2].length)) & 0xFF;
+                add_instruction(PRINT_ASCII_N, 1, add_bytes_argument(&args, 1));
             }
             else {
                 int args = get_var_id(line->data[2].data, line->data[2].length);
