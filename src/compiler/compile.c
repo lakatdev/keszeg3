@@ -541,6 +541,12 @@ void handle_line(line_t* line) {
                 tmp = realloc(tmp, length + line->data[i].length);
                 memcpy(&tmp[length], line->data[i].data, line->data[i].length);
                 length += line->data[i].length;
+
+                if (i != line->length - 1) {
+                    tmp = realloc(tmp, length + 1);
+                    tmp[length] = ' ';
+                    length++;
+                }
             }
             length = convert_chars(tmp, length);
             add_instruction(PRINT_STRING, length, add_bytes_argument(tmp, length));
@@ -667,6 +673,12 @@ void handle_line(line_t* line) {
             tmp = realloc(tmp, length + line->data[i].length);
             memcpy(&tmp[length], line->data[i].data, line->data[i].length);
             length += line->data[i].length;
+
+            if (i != line->length - 1) {
+                tmp = realloc(tmp, length + 1);
+                tmp[length] = ' ';
+                length++;
+            }
         }
         length = convert_chars(tmp, length);
         add_instruction(EXEC, length, add_bytes_argument(tmp, length));
