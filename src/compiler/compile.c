@@ -6,6 +6,7 @@
 #include "binary.h"
 #include "vars.h"
 
+void remove_comments(char* buffer, int length);
 int clear_buffer(char* buffer, unsigned int length);
 lines_list_t parse_lines(char* buffer, unsigned int length);
 void precompile(lines_list_t* lines);
@@ -40,6 +41,7 @@ int main(int argv, char** argc) {
     fread(buffer, length, 1, fptr);
     fclose(fptr);
 
+    remove_comments(buffer, length);
     length = clear_buffer(buffer, length);
     
     lines_list_t lines = parse_lines(buffer, length);
@@ -61,6 +63,24 @@ int main(int argv, char** argc) {
     fclose(save);
 
     return 0;
+}
+
+/*
+    Replaces comments with whitespaces
+*/
+void remove_comments(char* buffer, int length) {
+    for (int i = 0; i < length; i++) {
+        if (buffer[i] == '#') {
+            for (int j = i; j < length; j++) {
+                if (buffer[j] == '\n') {
+                    break;
+                }
+                else {
+                    buffer[j] = ' ';
+                }
+            }
+        }
+    }
 }
 
 /*
