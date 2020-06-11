@@ -46,3 +46,5 @@ while less i length
 end
 
 print string \n
+
+free numbers

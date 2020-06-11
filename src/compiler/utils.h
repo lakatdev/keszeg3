@@ -160,7 +160,7 @@ int to_int(char* str) {
 */
 int convert_chars(char* str, int length) {
     int new_length = remove_double_chars(str, length, '\\', 'n', '\n');
-    new_length = remove_double_chars(str, length, '\\', 'h', '#');
+    new_length = remove_double_chars(str, new_length, '\\', 'h', '#');
     return remove_double_chars(str, new_length, '\\', '\\', '\\');
 }
 

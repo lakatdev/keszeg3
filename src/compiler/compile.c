@@ -43,7 +43,7 @@ int main(int argv, char** argc) {
 
     remove_comments(buffer, length);
     length = clear_buffer(buffer, length);
-    
+
     lines_list_t lines = parse_lines(buffer, length);
     free(buffer);
 
@@ -89,10 +89,16 @@ void remove_comments(char* buffer, int length) {
 int clear_buffer(char* buffer, unsigned int length) {
     replace_char(buffer, length, '\t', ' ');
     replace_char(buffer, length, '\r', '\n');
-    length = remove_double_chars(buffer, length, ' ', ' ', ' ');
-    length = remove_double_chars(buffer, length, '\n', '\n', '\n');
-    length = remove_double_chars(buffer, length, '\n', ' ', '\n');
-    length = remove_double_chars(buffer, length, ' ', '\n', '\n');
+
+    int length_before = 0;
+
+    while (length_before != length) {
+        length_before = length;
+        length = remove_double_chars(buffer, length, ' ', ' ', ' ');
+        length = remove_double_chars(buffer, length, '\n', '\n', '\n');
+        length = remove_double_chars(buffer, length, '\n', ' ', '\n');
+        length = remove_double_chars(buffer, length, ' ', '\n', '\n');
+    }
 
     bool modified = false;
 

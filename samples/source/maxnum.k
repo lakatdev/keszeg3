@@ -26,3 +26,5 @@ end
 print string max:
 print num max
 print string \n
+
+free numbers
