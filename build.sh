@@ -1,2 +1,2 @@
 gcc src/compiler/compile.c -o keszegc
-gcc src/vm/keszegvm.c -o keszegr
+gcc -O3 src/vm/keszegvm.c -o keszegr
