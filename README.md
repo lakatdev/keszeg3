@@ -18,7 +18,7 @@ You can run this by using *keszegr*
 `./keszegr program`
 
 ## Writing code
-You write keszeg code by giving instructions to the vm. A keszeg source file should only contain these nothing else (besides comments)
+You write keszeg code by giving instructions to the vm. A keszeg source file should only contain these, nothing else (besides comments)
 
 ### Hello world
 This hello world program uses the print instruction with the string parameter. This print everything after the space after the string paramter
