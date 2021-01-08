@@ -96,4 +96,7 @@
 
 #define EXEC 0x44
 
+#define LOAD 0x46
+#define SAVE 0x47
+
 #endif

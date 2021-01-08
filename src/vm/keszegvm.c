@@ -11,6 +11,7 @@ typedef struct {
 
 int* variables;
 int** arrays;
+int* array_lengths;
 
 instruction* instructions;
 char* arguments;
@@ -74,6 +75,9 @@ int main(int argc, char** argv) {
     variables = malloc(sizeof(int) * *num_vars);
     arrays = malloc(sizeof(int*) * *num_arrays);
 
+    array_lengths = malloc(sizeof(int) * *num_arrays);
+    memset(array_lengths, 0, sizeof(int) * *num_arrays);
+
     instructions = malloc(*num_instructions * sizeof(instruction));
     memcpy(instructions, &buffer[sizeof(int) * 3], *num_instructions * sizeof(instruction));
 
@@ -83,6 +87,11 @@ int main(int argc, char** argv) {
     for (execution_state = 0; execution_state < *num_instructions; execution_state++) {
         execute(&instructions[execution_state]);
     }
+
+    free(buffer);
+    free(variables);
+    free(arrays);
+    free(array_lengths);
 
     return 0;
 }
@@ -387,6 +396,7 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
 
             arrays[*c1] = malloc(sizeof(int) * *c2);
+            array_lengths[*c1] = *c2;
 
             break;
         }
@@ -395,6 +405,7 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
 
             arrays[*c1] = malloc(sizeof(int) * variables[*c2]);
+            array_lengths[*c1] = variables[*c2];
 
             break;
         }
@@ -402,6 +413,7 @@ void execute(instruction* instruction) {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
 
             free(arrays[*c1]);
+            array_lengths[*c1] = 0;
 
             break;
         }
@@ -685,6 +697,50 @@ void execute(instruction* instruction) {
             memcpy(str, &arguments[instruction->args], instruction->argsize);
             str[instruction->argsize] = '\0';
             system(str);
+            free(str);
+
+            break;
+        }
+        case (LOAD): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+
+            char* str = malloc(instruction->argsize + 1 - 4);
+            memcpy(str, &arguments[instruction->args + 4], instruction->argsize - 4);
+            str[instruction->argsize - 4] = '\0';
+
+            unsigned int length;
+            FILE* load = fopen(str, "rb");
+            fseek(load, 0, SEEK_END);
+            length = ftell(load);
+            rewind(load);
+
+            int* buffer = malloc(length);
+            fread(buffer, length, 1, load);
+            fclose(load);
+
+            int arr_length = *buffer;
+
+            if (arr_length == array_lengths[*c1]) {
+                memcpy(arrays[*c1], &buffer[1], length - 4);
+            }
+
+            free(buffer);
+            free(str);
+
+            break;
+        }
+        case (SAVE): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+
+            char* str = malloc(instruction->argsize + 1 - 4);
+            memcpy(str, &arguments[instruction->args + 4], instruction->argsize - 4);
+            str[instruction->argsize - 4] = '\0';
+
+            FILE* save = fopen(str, "wb");
+            fwrite(&array_lengths[*c1], 4, 1, save);
+            fwrite(arrays[*c1], sizeof(int) * array_lengths[*c1], 1, save);
+            fclose(save);
+
             free(str);
 
             break;

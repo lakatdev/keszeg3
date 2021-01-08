@@ -124,3 +124,7 @@ Frees X array from memory
 Executes X command in the default shell
 ### while P X Y
 Works the same as *if*, except it repeats execution until condition is false
+### save X Y
+Saves contents of X array to Y file (path is relative to the vm)
+### load X Y
+Loads contents from Y file to X array (path is relative to the vm)
