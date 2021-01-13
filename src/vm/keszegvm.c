@@ -720,10 +720,13 @@ void execute(instruction* instruction) {
 
             int arr_length = *buffer;
 
-            if (arr_length == array_lengths[*c1]) {
-                memcpy(arrays[*c1], &buffer[1], length - 4);
+            if (arr_length != array_lengths[*c1]) {
+                arrays[*c1] = realloc(arrays[*c1], arr_length);
+                array_lengths[*c1]  = array_lengths[*c1];
             }
 
+            memcpy(arrays[*c1], &buffer[1], length - 4);
+            
             free(buffer);
             free(str);
 
