@@ -117,7 +117,7 @@ void remove_line(lines_list_t* lines, int index) {
 */
 bool is_number(char* str, int length) {
     for (int i = 0; i < length; i++) {
-        if (str[i] < 48 || str[i] > 57) {
+        if ((str[i] < 48 || str[i] > 57) && str[i] != 45) {
             return false;
         }
     }
