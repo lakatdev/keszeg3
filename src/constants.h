@@ -99,4 +99,7 @@
 #define LOAD 0x46
 #define SAVE 0x47
 
+#define PUSHJUMP 0x48
+#define RET 0x49
+
 #endif

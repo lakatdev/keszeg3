@@ -13,6 +13,8 @@ void precompile(lines_list_t* lines);
 void process_flags(lines_list_t* lines);
 void process_code(lines_list_t* lines);
 void handle_line(line_t* line);
+void print_lines(lines_list_t* lines);
+void insert_entrypoint(lines_list_t* lines);
 
 /*
     Exits program with provided error message
@@ -47,6 +49,7 @@ int main(int argv, char** argc) {
     lines_list_t lines = parse_lines(buffer, length);
     free(buffer);
 
+    insert_entrypoint(&lines);
     precompile(&lines);
     process_flags(&lines);
     process_code(&lines);
@@ -196,12 +199,30 @@ int find_end(lines_list_t* lines, int position) {
             memcmp("while", token, token_length) == 0) {
             newifs++;
         }
-
         if (memcmp("end", token, token_length) == 0) {
             newifs--;
         }
     }
     return seek_position;
+}
+
+/*
+    Inserts "jump main" to the beginning of the code
+*/
+void insert_entrypoint(lines_list_t* lines) {
+    line_t entryline;
+    entryline.length = 2;
+    entryline.data = malloc(sizeof(token_t) * 2);
+
+    entryline.data[0].data = malloc(4);
+    entryline.data[0].length = 4;
+    memcpy(entryline.data[0].data, "jump", 4);
+
+    entryline.data[1].data = malloc(4);
+    entryline.data[1].length = 4;
+    memcpy(entryline.data[1].data, "main", 4);
+
+    insert_line(lines, 0, entryline);
 }
 
 /*
@@ -249,6 +270,12 @@ void precompile(lines_list_t* lines) {
 
             precompile(lines);
         }
+        else if (memcmp("fun", token, token_length) == 0) {
+            lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 4);
+            memcpy(lines->data[i].data[0].data, "flag", 4);
+            lines->data[i].data[0].length = 4;
+            precompile(lines);
+        }
     }
 }
 
@@ -278,6 +305,22 @@ void process_flags(lines_list_t* lines) {
 void process_code(lines_list_t* lines) {
     for (int i = 0; i < lines->length; i++) {
         handle_line(&lines->data[i]);
+    }
+}
+
+/*
+    Prints lines_list_t type as readable code to stdout
+*/
+void print_lines(lines_list_t* lines) {
+    for (int i = 0; i < lines->length; i++) {
+        printf("%d (%d): ", i + 1, lines->data[i].length);
+        for (int j = 0; j < lines->data[i].length; j++) {
+            char tmp[lines->data[i].data[j].length + 1];
+            tmp[lines->data[i].data[j].length] = '\0';
+            memcpy(tmp, lines->data[i].data[j].data, lines->data[i].data[j].length);
+            printf("%s ", tmp);
+        }
+        printf("\n");
     }
 }
 
@@ -753,5 +796,12 @@ void handle_line(line_t* line) {
         add_instruction(SAVE, 4 + length, add_int_arguments(args, 1));
         add_bytes_argument(tmp, length);
         free(tmp);
+    }
+    else if (memcmp("call", instr, instr_length) == 0) {
+        int args = get_flag_position(line->data[1].data, line->data[1].length);
+        add_instruction(PUSHJUMP, 4, add_int_arguments(&args, 1));
+    }
+    else if (memcmp("return", instr, instr_length) == 0) {
+        add_instruction(RET, 0, 0);
     }
 }

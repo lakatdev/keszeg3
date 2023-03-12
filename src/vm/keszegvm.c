@@ -3,6 +3,8 @@
 #include <string.h>
 #include "../constants.h"
 
+#define STACK_SIZE 256
+
 typedef struct {
     unsigned short type;
     unsigned short argsize;
@@ -12,6 +14,9 @@ typedef struct {
 int* variables;
 int** arrays;
 int* array_lengths;
+
+int stack_top = -1;
+int stack[STACK_SIZE];
 
 instruction* instructions;
 char* arguments;
@@ -25,6 +30,26 @@ void execute(instruction*);
 */
 int* parse_int_pointer(char* bytes) {
     return (int*)bytes;
+}
+
+/*
+    Push int value to stack
+*/
+void push(int value) {
+    if (stack_top == STACK_SIZE - 1) {
+        return;
+    }
+    stack[++stack_top] = value;
+}
+
+/*
+    Pop value from stack
+*/
+int pop() {
+    if (stack_top == -1) {
+        return -1;
+    }
+    return stack[stack_top--];
 }
 
 /*
@@ -86,6 +111,9 @@ int main(int argc, char** argv) {
 
     for (execution_state = 0; execution_state < *num_instructions; execution_state++) {
         execute(&instructions[execution_state]);
+        if (execution_state == -1) {
+            break;
+        }
     }
 
     free(buffer);
@@ -746,6 +774,16 @@ void execute(instruction* instruction) {
 
             free(str);
 
+            break;
+        }
+        case (PUSHJUMP): {
+            push(execution_state);
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            execution_state = *c1 - 1;
+            break;
+        }
+        case (RET): {
+            execution_state = pop(); //talan offbyone lesz vagy itt vagy a pushnal
             break;
         }
     }
