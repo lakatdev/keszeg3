@@ -11,7 +11,7 @@ When you are ready with the keszeg source file, you should first compile it with
 
 `./keszegc source.kszg program`
 
-This will grab the "source.kszg" file and compile it a keszeg binary named "program"
+This will grab the "source.kszg" file and compile it to a keszeg binary named "program"
 
 You can run this by using *keszegr*
 
@@ -21,11 +21,11 @@ You can run this by using *keszegr*
 You write keszeg code by giving instructions to the vm. A keszeg source file should only contain these, nothing else (besides comments)
 
 ### Hello world
-This hello world program uses the print instruction with the string parameter. This print everything after the space after the string paramter
+This hello world program uses the print instruction with the string parameter. This prints everything after the space after the string parameter
 
 `print string Hello World!\n`
 
-The "\n" at the end print a new line. There are only 2 escaped characters in keszeg, one is the newline character the other is the numbersign (#)
+The "\n" at the end prints a new line. There are only 2 escaped characters in keszeg, one is the newline character the other is the numbersign (#)
 
 - newline: "\n"
 - numbersign: "\h"
@@ -34,13 +34,41 @@ The "\n" at the end print a new line. There are only 2 escaped characters in kes
 This program uses a while loop to print numbers from 0 to 100 each to a new line
 
 ```
-set i 0
-while lessequals i 100
-    print num i
-    print string \n
-    inc i
-end
+fun main
+    set i 0
+    while lessequals i 100
+        print num i
+        print string \n
+        inc i
+    end
+return
 ```
+
+### Functions
+Each program execution starts at the main function and runs until its return instruction is reached.
+One can call another function using the call instruction.
+
+The following program prints the line "monke" 20 times.
+
+```
+fun monke
+    set j 0
+    while lessequals j 10
+        print string monke\n
+        inc j
+    end
+return
+
+fun main
+    set i 0
+    while lessequals i 2
+        call monke
+        inc i
+    end
+return
+```
+
+Notice that the iterator variables differ. That is because in keszeg they are not specific to scope.
 
 ### Comments
 You can document your code using comments. After a '#' in the line, nothing will be compiled.
@@ -48,12 +76,14 @@ You can document your code using comments. After a '#' in the line, nothing will
 Example:
 
 ```
-set i 0                    #set the value of i to 0
-while lessequals i 100     #repeat while i <= 100
-    print num i            #print value of i
-    print string \n        #print newline character
-    inc i                  #increase i by one
-end                        #end of while loop
+fun main
+    set i 0                    #set the value of i to 0
+    while lessequals i 100     #repeat while i <= 100
+        print num i            #print value of i
+        print string \n        #print newline character
+        inc i                  #increase i by one
+    end                        #end of while loop
+return
 ```
 
 ## All default instructions
@@ -128,3 +158,9 @@ Works the same as *if*, except it repeats execution until condition is false
 Saves contents of X array to Y file (path is relative to the vm)
 ### load X Y
 Loads contents from Y file to X array (path is relative to the vm)
+### call X
+Program execution jumps to X function and when its finished, returns here
+### return
+End of function, execution continues from where the function was called.
+### fun X
+Declares X function
