@@ -53,7 +53,7 @@ The following program prints the line "monke" 20 times.
 ```
 fun monke
     set j 0
-    while lessequals j 10
+    while less j 10
         print string monke\n
         inc j
     end
@@ -61,7 +61,7 @@ return
 
 fun main
     set i 0
-    while lessequals i 2
+    while less i 2
         call monke
         inc i
     end
