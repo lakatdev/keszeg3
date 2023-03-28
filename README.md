@@ -95,10 +95,10 @@ Sets value of Y to X variable, Y can be either a constant or a variable
 The if instruction has 6 different conditions
 - ==
 - <
-- >
+- \>
 - !=
 - <=
-- >=
+- \>=
 
 The value of X is compared to the value of Y the way the condition describes
 
