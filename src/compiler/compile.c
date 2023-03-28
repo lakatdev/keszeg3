@@ -226,7 +226,7 @@ void insert_entrypoint(lines_list_t* lines) {
 }
 
 /*
-    Converts higher level functions to compilable code
+    Converts higher level functionalities to compilable code
 */
 void precompile(lines_list_t* lines) {
     for (int i = 0; i < lines->length; i++) {
@@ -270,7 +270,7 @@ void precompile(lines_list_t* lines) {
 
             precompile(lines);
         }
-        else if (memcmp("fun", token, token_length) == 0) {
+        else if (memcmp("rout", token, token_length) == 0) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 4);
             memcpy(lines->data[i].data[0].data, "flag", 4);
             lines->data[i].data[0].length = 4;
@@ -343,138 +343,138 @@ void handle_line(line_t* line) {
         }
     }
     else if (memcmp("if", instr, instr_length) == 0) {
-        int condition_length = line->data[1].length;
+        int condition_length = line->data[2].length;
         char condition[condition_length];
-        memcpy(&condition, line->data[1].data, condition_length);
+        memcpy(&condition, line->data[2].data, condition_length);
 
-        if (memcmp("more", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        if (memcmp(">", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_M_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_M_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_M_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_M_VV, 8, add_int_arguments(args, 2));
                 }
             }
         }
-        else if (memcmp("less", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        else if (memcmp("<", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_L_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_L_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_L_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_L_VV, 8, add_int_arguments(args, 2));
                 }
             }
         }
-        else if (memcmp("equals", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        else if (memcmp("==", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_E_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_E_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_E_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_E_VV, 8, add_int_arguments(args, 2));
                 }
             }
         }
-        else if (memcmp("different", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        else if (memcmp("!=", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_D_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_D_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_D_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_D_VV, 8, add_int_arguments(args, 2));
                 }
             }
         }
-        else if (memcmp("lessequals", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        else if (memcmp("<=", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_LE_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_LE_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_LE_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_LE_VV, 8, add_int_arguments(args, 2));
                 }
             }
         }
-        else if (memcmp("moreequals", condition, condition_length) == 0) {
-            if (is_number(line->data[2].data, line->data[2].length)) {
+        else if (memcmp(">=", condition, condition_length) == 0) {
+            if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_ME_NN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_ME_NV, 8, add_int_arguments(args, 2));
                 }
             }
             else {
                 if (is_number(line->data[3].data, line->data[3].length)) {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
                     add_instruction(IF_ME_VN, 8, add_int_arguments(args, 2));
                 }
                 else {
-                    int args[2] = {get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                    int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[3].data, line->data[3].length)};
                     add_instruction(IF_ME_VV, 8, add_int_arguments(args, 2));
                 }
             }

@@ -1,11 +1,11 @@
-fun main
+rout main
     print string n:
     input num length
 
     array numbers length
 
     set i 0
-    while less i length
+    while i < length
         set disp i
         inc disp
         print num disp
@@ -18,16 +18,16 @@ fun main
     set nm length
     dec nm
     set i 0
-    while less i nm
+    while i < nm
         set secit nm
         sub secit nm i
         set j 0
-        while less j secit
+        while j < secit
             arrget this numbers j
             inc j
             arrget next numbers j
             dec j
-            if more this next
+            if this > next
                 arrset numbers j next
                 inc j
                 arrset numbers j this
@@ -39,7 +39,7 @@ fun main
     end
 
     set i 0
-    while less i length
+    while i < length
         arrget disp numbers i
         print num disp
         print ascii 32

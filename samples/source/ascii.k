@@ -1,6 +1,6 @@
-fun main
+rout main
     set index 33
-    while less index 127
+    while index < 127
         print ascii index
         inc index
     end

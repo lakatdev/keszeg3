@@ -1,10 +1,10 @@
-fun main
+rout main
     print string n:
     input num length
     array numbers length
 
     set i 0
-    while less i length
+    while i < length
         set disp i
         inc disp
         print num disp
@@ -16,9 +16,9 @@ fun main
 
     arrget max numbers 0
     set i 1
-    while less i length
+    while i < length
         arrget tmp numbers i
-        if more tmp max
+        if tmp > max
             set max tmp
         end
         inc i

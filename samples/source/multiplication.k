@@ -1,4 +1,4 @@
-fun main
+rout main
     print string x:
     input num n1
 

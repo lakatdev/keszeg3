@@ -1,9 +1,9 @@
-fun main
+rout main
     input num number
     mul number number 10000
     set sqrt number
     div sqrt sqrt 2
-    while different sqrt temp
+    while sqrt != temp
         set temp sqrt
         div tmp number temp
         add tmp tmp temp

@@ -34,9 +34,9 @@ The "\n" at the end prints a new line. There are only 2 escaped characters in ke
 This program uses a while loop to print numbers from 0 to 100 each to a new line
 
 ```
-fun main
+rout main
     set i 0
-    while lessequals i 100
+    while i <= 100
         print num i
         print string \n
         inc i
@@ -44,24 +44,24 @@ fun main
 return
 ```
 
-### Functions
-Each program execution starts at the main function and runs until its return instruction is reached.
-One can call another function using the call instruction.
+### Subroutines
+Each program execution starts at the main subroutine (basically a main flag) and runs until its return instruction is reached.
+One can call another subroutine using the call instruction.
 
 The following program prints the line "monke" 20 times.
 
 ```
-fun monke
+rout monke
     set j 0
-    while less j 10
+    while j < 10
         print string monke\n
         inc j
     end
 return
 
-fun main
+rout main
     set i 0
-    while less i 2
+    while i < 2
         call monke
         inc i
     end
@@ -76,9 +76,9 @@ You can document your code using comments. After a '#' in the line, nothing will
 Example:
 
 ```
-fun main
+rout main
     set i 0                    #set the value of i to 0
-    while lessequals i 100     #repeat while i <= 100
+    while i <= 100             #repeat while i <= 100
         print num i            #print value of i
         print string \n        #print newline character
         inc i                  #increase i by one
@@ -91,16 +91,16 @@ Here is a list of all instructions with a description of what they do
 
 ### set X Y
 Sets value of Y to X variable, Y can be either a constant or a variable
-### if P X Y
-The if instruction has 6 different options
-- equals
-- less
-- more
-- different
-- lessequals
-- moreequals
+### if X C Y
+The if instruction has 6 different conditions
+- ==
+- <
+- >
+- !=
+- <=
+- >=
 
-The value of X is compared to the value of Y the way the parameter describes
+The value of X is compared to the value of Y the way the condition describes
 
 If the result is true the code between this *if* instruction and the corresponding *end* instruction will be executed
 ### add X Y Z
@@ -152,15 +152,15 @@ Continues execution at X flag
 Frees X array from memory
 ### exec X
 Executes X command in the default shell
-### while P X Y
+### while X C Y
 Works the same as *if*, except it repeats execution until condition is false
 ### save X Y
 Saves contents of X array to Y file (path is relative to the vm)
 ### load X Y
 Loads contents from Y file to X array (path is relative to the vm)
 ### call X
-Program execution jumps to X function and when its finished, returns here
+Program execution jumps to X subroutine and when its finished, returns here
 ### return
-End of function, execution continues from where the function was called.
-### fun X
-Declares X function
+End of subroutine, execution continues from where the subroutine was called.
+### rout X
+Declares X subroutine
