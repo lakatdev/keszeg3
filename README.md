@@ -25,10 +25,11 @@ This hello world program uses the print instruction with the string parameter. T
 
 `print string Hello World!\n`
 
-The "\n" at the end prints a new line. There are only 2 escaped characters in keszeg, one is the newline character the other is the numbersign (#).
+The "\n" at the end prints a new line. There are only 3 escaped characters in keszeg, one is the newline character and the other two are the numbersign (#) and the space.
 
 - newline: "\n"
 - numbersign: "\h"
+- space: "\s"
 
 ### Print numbers from 0 to 100
 This program uses a while loop to print numbers from 0 to 100 each to a new line.

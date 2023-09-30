@@ -432,6 +432,7 @@ void execute(instruction* instruction) {
             if (arrays[*c1] != NULL) {
                 free(arrays[*c1]);
                 array_lengths[*c1] = 0;
+                arrays[*c1] = NULL;
             }
 
             break;
