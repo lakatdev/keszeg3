@@ -69,6 +69,31 @@ int main(int argv, char** argc) {
 }
 
 /*
+    Converts a character to lowercase if it is uppercase
+*/
+int tolower(int c) {
+    if (c >= 'A' && c <= 'Z') {
+        return c + ('a' - 'A');
+    } 
+    else {
+        return c;
+    }
+}
+
+/*
+    Compares two strings case insensitively
+*/
+bool case_insensitive_compare(const char* str1, const char* str2, int len) {
+    int i;
+    for (i = 0; i < len; i++) {
+        if (tolower(str1[i]) != tolower(str2[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*
     Replaces comments with whitespaces
 */
 void remove_comments(char* buffer, int length) {
@@ -195,11 +220,11 @@ int find_end(lines_list_t* lines, int position) {
         char token[token_length];
         memcpy(token, lines->data[seek_position].data[0].data, token_length);
 
-        if (memcmp("if", token, token_length) == 0 ||
-            memcmp("while", token, token_length) == 0) {
+        if (case_insensitive_compare("if", token, token_length) ||
+            case_insensitive_compare("while", token, token_length)) {
             newifs++;
         }
-        if (memcmp("end", token, token_length) == 0) {
+        if (case_insensitive_compare("end", token, token_length)) {
             newifs--;
         }
     }
@@ -235,7 +260,7 @@ void precompile(lines_list_t* lines) {
         char token[token_length];
         memcpy(token, lines->data[i].data[0].data, token_length);
 
-        if (memcmp("while", token, token_length) == 0) {
+        if (case_insensitive_compare("while", token, token_length)) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 2);
             memcpy(lines->data[i].data[0].data, "if", 2);
             lines->data[i].data[0].length = 2;
@@ -270,7 +295,7 @@ void precompile(lines_list_t* lines) {
 
             precompile(lines);
         }
-        else if (memcmp("rout", token, token_length) == 0) {
+        else if (case_insensitive_compare("rout", token, token_length)) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 4);
             memcpy(lines->data[i].data[0].data, "flag", 4);
             lines->data[i].data[0].length = 4;
@@ -288,7 +313,7 @@ void process_flags(lines_list_t* lines) {
         char token[token_length];
         memcpy(token, lines->data[i].data[0].data, token_length);
 
-        if (memcmp("flag", token, token_length) == 0) {
+        if (case_insensitive_compare("flag", token, token_length)) {
             add_flag(lines->data[i].data[1].data, lines->data[i].data[1].length, i);
         }
     }
@@ -332,7 +357,7 @@ void handle_line(line_t* line) {
     char instr[instr_length];
     memcpy(&instr, line->data[0].data, instr_length);
 
-    if (memcmp("set", instr, instr_length) == 0) {
+    if (case_insensitive_compare("set", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
             add_instruction(SET_N, 8, add_int_arguments(args, 2));
@@ -342,12 +367,12 @@ void handle_line(line_t* line) {
             add_instruction(SET_V, 8, add_int_arguments(args, 2));
         }
     }
-    else if (memcmp("if", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("if", instr, instr_length)) {
         int condition_length = line->data[2].length;
         char condition[condition_length];
         memcpy(&condition, line->data[2].data, condition_length);
 
-        if (memcmp(">", condition, condition_length) == 0) {
+        if (case_insensitive_compare(">", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -369,7 +394,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp("<", condition, condition_length) == 0) {
+        else if (case_insensitive_compare("<", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -391,7 +416,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp("=", condition, condition_length) == 0) {
+        else if (case_insensitive_compare("=", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -413,7 +438,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp("!=", condition, condition_length) == 0) {
+        else if (case_insensitive_compare("!=", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -435,7 +460,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp("<=", condition, condition_length) == 0) {
+        else if (case_insensitive_compare("<=", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -457,7 +482,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp(">=", condition, condition_length) == 0) {
+        else if (case_insensitive_compare(">=", condition, condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -480,7 +505,7 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("add", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("add", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -502,7 +527,7 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("array", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("array", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             int args[2] = {get_arr_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
             add_instruction(ARRAY_N, 8, add_int_arguments(args, 2));
@@ -512,7 +537,7 @@ void handle_line(line_t* line) {
             add_instruction(ARRAY_V, 8, add_int_arguments(args, 2));
         }
     }
-    else if (memcmp("sub", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("sub", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -534,7 +559,7 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("mul", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("mul", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -556,7 +581,7 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("div", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("div", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -578,12 +603,12 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("print", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("print", instr, instr_length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
 
-        if (memcmp("num", mode, mode_length) == 0) {
+        if (case_insensitive_compare("num", mode, mode_length)) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 int args = to_int(insert_null(line->data[2].data, line->data[2].length));
                 add_instruction(PRINT_NUM_N, 4, add_int_arguments(&args, 1));
@@ -593,7 +618,7 @@ void handle_line(line_t* line) {
                 add_instruction(PRINT_NUM_V, 4, add_int_arguments(&args, 1));
             }
         }
-        else if (memcmp("ascii", mode, mode_length) == 0) {
+        else if (case_insensitive_compare("ascii", mode, mode_length)) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 char args = to_int(insert_null(line->data[2].data, line->data[2].length)) & 0xFF;
                 add_instruction(PRINT_ASCII_N, 1, add_bytes_argument(&args, 1));
@@ -603,7 +628,7 @@ void handle_line(line_t* line) {
                 add_instruction(PRINT_ASCII_V, 4, add_int_arguments(&args, 1));
             }
         }
-        else if (memcmp("string", mode, mode_length) == 0) {
+        else if (case_insensitive_compare("string", mode, mode_length)) {
             char* tmp = malloc(0);
             int length = 0;
             for (int i = 2; i < line->length; i++) {
@@ -622,21 +647,21 @@ void handle_line(line_t* line) {
             free(tmp);
         }
     }
-    else if (memcmp("input", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("input", instr, instr_length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
 
-        if (memcmp("num", mode, mode_length) == 0) {
+        if (case_insensitive_compare("num", mode, mode_length)) {
             int args = get_var_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_NUM, 4, add_int_arguments(&args, 1));
         }
-        else if (memcmp("ascii", mode, mode_length) == 0) {
+        else if (case_insensitive_compare("ascii", mode, mode_length)) {
             int args = get_var_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_ASCII, 4, add_int_arguments(&args, 1));
         }
     }
-    else if (memcmp("mod", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("mod", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -658,10 +683,10 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("end", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("end", instr, instr_length)) {
         add_instruction(END, 0, 0);
     }
-    else if (memcmp("arrset", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("arrset", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             if (is_number(line->data[3].data, line->data[3].length)) {
                 int args[3] = {get_arr_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -683,7 +708,7 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (memcmp("arrget", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("arrget", instr, instr_length)) {
         if (is_number(line->data[3].data, line->data[3].length)) {
             int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_arr_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
             add_instruction(ARRGET_N, 12, add_int_arguments(args, 3));
@@ -693,7 +718,7 @@ void handle_line(line_t* line) {
             add_instruction(ARRGET_V, 12, add_int_arguments(args, 3));
         }
     }
-    else if (memcmp("inc", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("inc", instr, instr_length)) {
         if (line->length >= 3) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
@@ -710,7 +735,7 @@ void handle_line(line_t* line) {
             add_instruction(INC_N, 8, add_int_arguments(args, 2));
         }
     }
-    else if (memcmp("dec", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("dec", instr, instr_length)) {
         if (line->length >= 3) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
@@ -727,15 +752,15 @@ void handle_line(line_t* line) {
             add_instruction(DEC_N, 8, add_int_arguments(args, 2));
         }
     }
-    else if (memcmp("jump", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("jump", instr, instr_length)) {
         int args = get_flag_position(line->data[1].data, line->data[1].length);
         add_instruction(JUMP, 4, add_int_arguments(&args, 1));
     }
-    else if (memcmp("free", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("free", instr, instr_length)) {
         int args = get_arr_id(line->data[1].data, line->data[1].length);
         add_instruction(FREE_ARRAY, 4, add_int_arguments(&args, 1));
     }
-    else if (memcmp("exec", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("exec", instr, instr_length)) {
         char* tmp = malloc(0);
         int length = 0;
         for (int i = 1; i < line->length; i++) {
@@ -753,7 +778,7 @@ void handle_line(line_t* line) {
         add_instruction(EXEC, length, add_bytes_argument(tmp, length));
         free(tmp);
     }
-    else if (memcmp("load", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("load", instr, instr_length)) {
         char* tmp = malloc(0);
         int length = 0;
         for (int i = 2; i < line->length; i++) {
@@ -775,7 +800,7 @@ void handle_line(line_t* line) {
         add_bytes_argument(tmp, length);
         free(tmp);
     }
-    else if (memcmp("save", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("save", instr, instr_length)) {
         char* tmp = malloc(0);
         int length = 0;
         for (int i = 2; i < line->length; i++) {
@@ -797,11 +822,11 @@ void handle_line(line_t* line) {
         add_bytes_argument(tmp, length);
         free(tmp);
     }
-    else if (memcmp("call", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("call", instr, instr_length)) {
         int args = get_flag_position(line->data[1].data, line->data[1].length);
         add_instruction(PUSHJUMP, 4, add_int_arguments(&args, 1));
     }
-    else if (memcmp("return", instr, instr_length) == 0) {
+    else if (case_insensitive_compare("return", instr, instr_length)) {
         add_instruction(RET, 0, 0);
     }
 }

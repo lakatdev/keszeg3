@@ -1,37 +1,37 @@
 # Keszeg language
 ## How to build
-You can use the provided build script which uses *gcc* to build the sources
+You can use the provided build script which uses *gcc* to build the sources.
 
 `./build.sh`
 
-It is recommended to use the *-O3* build flag on *gcc* when compiling *keszegr*
+It is recommended to use the *-O3* build flag on *gcc* when compiling *keszegr*.
 
 ## Compiling and running the code
-When you are ready with the keszeg source file, you should first compile it with *keszegc*
+When you are ready with the keszeg source file, you should first compile it with *keszegc*.
 
 `./keszegc source.kszg program`
 
-This will grab the "source.kszg" file and compile it to a keszeg binary named "program"
+This will grab the "source.kszg" file and compile it to a keszeg binary named "program".
 
-You can run this by using *keszegr*
+You can run this by using *keszegr*.
 
 `./keszegr program`
 
 ## Writing code
-You write keszeg code by giving instructions to the vm. A keszeg source file should only contain these, nothing else (besides comments)
+You write keszeg code by giving instructions to the vm. A keszeg source file should only contain these, nothing else (besides comments).
 
 ### Hello world
-This hello world program uses the print instruction with the string parameter. This prints everything after the space after the string parameter
+This hello world program uses the print instruction with the string parameter. This prints everything after the space after the string parameter.
 
 `print string Hello World!\n`
 
-The "\n" at the end prints a new line. There are only 2 escaped characters in keszeg, one is the newline character the other is the numbersign (#)
+The "\n" at the end prints a new line. There are only 2 escaped characters in keszeg, one is the newline character the other is the numbersign (#).
 
 - newline: "\n"
 - numbersign: "\h"
 
 ### Print numbers from 0 to 100
-This program uses a while loop to print numbers from 0 to 100 each to a new line
+This program uses a while loop to print numbers from 0 to 100 each to a new line.
 
 ```
 rout main
@@ -87,12 +87,12 @@ return
 ```
 
 ## All default instructions
-Here is a list of all instructions with a description of what they do
+Here is a list of all instructions with a description of what they do. It is important to note that they are case insensitive.
 
 ### set X Y
-Sets value of Y to X variable, Y can be either a constant or a variable
+Sets value of Y to X variable, Y can be either a constant or a variable.
 ### if X C Y
-The if instruction has 6 different conditions
+The if instruction has 6 different conditions:
 - =
 - <
 - \>
@@ -100,65 +100,65 @@ The if instruction has 6 different conditions
 - <=
 - \>=
 
-The value of X is compared to the value of Y the way the condition describes
+The value of X is compared to the value of Y the way the condition describes.
 
-If the result is true the code between this *if* instruction and the corresponding *end* instruction will be executed
+If the result is true the code between this *if* instruction and the corresponding *end* instruction will be executed.
 ### add X Y Z
-Stores the sum of Y and Z in the X variable
+Stores the sum of Y and Z in the X variable.
 ### sub X Y Z
-Stores the difference of Y and Z in the X variable
+Stores the difference of Y and Z in the X variable.
 ### mul X Y Z
-Stores the product of Y and Z in the X variable
+Stores the product of Y and Z in the X variable.
 ### div X Y Z
-Stores the ratio of Y and Z in the X variable
+Stores the ratio of Y and Z in the X variable.
 ### print P X
-The print instruction has 3 different options
+The print instruction has 3 different options:
 - num
 - ascii
 - string
 
-The *num* option prints the numerical value of the constant or the variable
+The *num* option prints the numerical value of the constant or the variable.
 
-The *ascii* option print the corresponding ascii character to the numerical value of a constant or a variable
+The *ascii* option print the corresponding ascii character to the numerical value of a constant or a variable.
 
-The *string* option prints everything written after the instruction's parameter
+The *string* option prints everything written after the instruction's parameter.
 ### input P X
-This instruction has 2 different options
+This instruction has 2 different options:
 - num
 - ascii
 
-The *num* option receives a number input and places the value in X variable
+The *num* option receives a number input and places the value in X variable.
 
-The *ascii* option receives a character as input and places its ascii value in the X variable
+The *ascii* option receives a character as input and places its ascii value in the X variable.
 ### mod X Y Z
-Stores Y mod Z value in the X variable
+Stores Y mod Z value in the X variable.
 ### end
-Indicates end of *if* conditions and *while* loops
+Indicates end of *if* conditions and *while* loops.
 ### arrset X Y Z
-Sets the (Y - 1)th value of the X array to Z. Resizes the array if it is not large enough
+Sets the (Y - 1)th value of the X array to Z. Resizes the array if it is not large enough.
 ### arrget X Y Z
-Sets the X variable to the (Z - 1)th value of the Y array, returns 0 if Z is out of bounds
+Sets the X variable to the (Z - 1)th value of the Y array, returns 0 if Z is out of bounds.
 ### inc X (Y)
-Increases the X variable by Y if Y is specified, if not then by 1
+Increases the X variable by Y if Y is specified, if not then by 1.
 ### dec X (Y)
-Decreases the X variable by Y if Y is specified, if not then by 1
+Decreases the X variable by Y if Y is specified, if not then by 1.
 ### flag X
-Flags a position in the execution position
+Flags a position in the execution position.
 ### jump X
-Continues execution at X flag
+Continues execution at X flag.
 ### free X
-Empties an array, clears its content
+Empties an array, clears its content.
 ### exec X
-Executes X command in the default shell
+Executes X command in the default shell.
 ### while X C Y
-Works the same as *if*, except it repeats execution until condition is false
+Works the same as *if*, except it repeats execution until condition is false.
 ### save X Y
-Saves contents of X array to Y file (path is relative to the vm)
+Saves contents of X array to Y file (path is relative to the vm).
 ### load X Y
-Loads contents from Y file to X array (path is relative to the vm)
+Loads contents from Y file to X array (path is relative to the vm).
 ### call X
-Program execution jumps to X subroutine and when its finished, returns here
+Program execution jumps to X subroutine and when its finished, returns here.
 ### return
 End of subroutine, execution continues from where the subroutine was called.
 ### rout X
-Declares X subroutine
+Declares X subroutine.
