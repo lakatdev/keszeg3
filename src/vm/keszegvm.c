@@ -99,6 +99,7 @@ int main(int argc, char** argv) {
 
     variables = malloc(sizeof(int) * *num_vars);
     arrays = malloc(sizeof(int*) * *num_arrays);
+    memset(arrays, 0, sizeof(int*) * *num_arrays);
 
     array_lengths = malloc(sizeof(int) * *num_arrays);
     memset(array_lengths, 0, sizeof(int) * *num_arrays);
@@ -113,6 +114,12 @@ int main(int argc, char** argv) {
         execute(&instructions[execution_state]);
         if (execution_state == -1) {
             break;
+        }
+    }
+
+    for (int i = 0; i < *num_arrays; i++) {
+        if (arrays[i] != NULL) {
+            free(arrays[i]);
         }
     }
 
@@ -419,29 +426,13 @@ void execute(instruction* instruction) {
 
             break;
         }
-        case (ARRAY_N): {
-            int* c1 = parse_int_pointer(&arguments[instruction->args]);
-            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
-
-            arrays[*c1] = malloc(sizeof(int) * *c2);
-            array_lengths[*c1] = *c2;
-
-            break;
-        }
-        case (ARRAY_V): {
-            int* c1 = parse_int_pointer(&arguments[instruction->args]);
-            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
-
-            arrays[*c1] = malloc(sizeof(int) * variables[*c2]);
-            array_lengths[*c1] = variables[*c2];
-
-            break;
-        }
         case (FREE_ARRAY): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
 
-            free(arrays[*c1]);
-            array_lengths[*c1] = 0;
+            if (arrays[*c1] != NULL) {
+                free(arrays[*c1]);
+                array_lengths[*c1] = 0;
+            }
 
             break;
         }
@@ -637,6 +628,19 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
 
+            if (*c2 < 0) {
+                break;
+            }
+            else if (*c2 >= array_lengths[*c1]) {
+                if (arrays[*c1] != NULL) {
+                    arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (*c2 + 1));
+                }
+                else {
+                    arrays[*c1] = malloc(sizeof(int) * (*c2 + 1));
+                }
+                array_lengths[*c1] = *c2 + 1;
+            }
+
             arrays[*c1][*c2] = *c3;
 
             break;
@@ -645,6 +649,19 @@ void execute(instruction* instruction) {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (*c2 < 0) {
+                break;
+            }
+            else if (*c2 >= array_lengths[*c1]) {
+                if (arrays[*c1] != NULL) {
+                    arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (*c2 + 1));
+                }
+                else {
+                    arrays[*c1] = malloc(sizeof(int) * (*c2 + 1));
+                }
+                array_lengths[*c1] = *c2 + 1;
+            }
 
             arrays[*c1][*c2] = variables[*c3];
 
@@ -655,6 +672,19 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
 
+            if (variables[*c2] < 0) {
+                break;
+            }
+            else if (variables[*c2] >= array_lengths[*c1]) {
+                if (arrays[*c1] != NULL) {
+                    arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (variables[*c2] + 1));
+                }
+                else {
+                    arrays[*c1] = malloc(sizeof(int) * (variables[*c2] + 1));
+                }
+                array_lengths[*c1] = variables[*c2] + 1;
+            }
+
             arrays[*c1][variables[*c2]] = *c3;
 
             break;
@@ -663,6 +693,19 @@ void execute(instruction* instruction) {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (variables[*c2] < 0) {
+                break;
+            }
+            else if (variables[*c2] >= array_lengths[*c1]) {
+                if (arrays[*c1] != NULL) {
+                    arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (variables[*c2] + 1));
+                }
+                else {
+                    arrays[*c1] = malloc(sizeof(int) * (variables[*c2] + 1));
+                }
+                array_lengths[*c1] = variables[*c2] + 1;
+            }
 
             arrays[*c1][variables[*c2]] = variables[*c3];
 
@@ -673,6 +716,10 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
 
+            if (*c3 >= array_lengths[*c2] || *c3 < 0) {
+                variables[*c1] = 0;
+                break;
+            }
             variables[*c1] = arrays[*c2][*c3];
 
             break;
@@ -682,6 +729,10 @@ void execute(instruction* instruction) {
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
 
+            if (variables[*c3] >= array_lengths[*c2] || variables[*c3] < 0) {
+                variables[*c1] = 0;
+                break;
+            }
             variables[*c1] = arrays[*c2][variables[*c3]];
 
             break;

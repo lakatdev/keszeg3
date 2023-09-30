@@ -1,7 +1,6 @@
 rout main
     print string n:
     input num length
-    array numbers length
 
     set i 0
     while i < length
@@ -27,6 +26,4 @@ rout main
     print string max:
     print num max
     print string \n
-
-    free numbers
 return

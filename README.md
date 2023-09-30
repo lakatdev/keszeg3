@@ -93,7 +93,7 @@ Here is a list of all instructions with a description of what they do
 Sets value of Y to X variable, Y can be either a constant or a variable
 ### if X C Y
 The if instruction has 6 different conditions
-- ==
+- =
 - <
 - \>
 - !=
@@ -105,8 +105,6 @@ The value of X is compared to the value of Y the way the condition describes
 If the result is true the code between this *if* instruction and the corresponding *end* instruction will be executed
 ### add X Y Z
 Stores the sum of Y and Z in the X variable
-### array X Y
-Defines X array with size of Y
 ### sub X Y Z
 Stores the difference of Y and Z in the X variable
 ### mul X Y Z
@@ -137,9 +135,9 @@ Stores Y mod Z value in the X variable
 ### end
 Indicates end of *if* conditions and *while* loops
 ### arrset X Y Z
-Sets the (Y - 1)th value of the X array to Z
+Sets the (Y - 1)th value of the X array to Z. Resizes the array if it is not large enough
 ### arrget X Y Z
-Sets the X variable to the (Z - 1)th value of the Y array
+Sets the X variable to the (Z - 1)th value of the Y array, returns 0 if Z is out of bounds
 ### inc X (Y)
 Increases the X variable by Y if Y is specified, if not then by 1
 ### dec X (Y)
@@ -149,7 +147,7 @@ Flags a position in the execution position
 ### jump X
 Continues execution at X flag
 ### free X
-Frees X array from memory
+Empties an array, clears its content
 ### exec X
 Executes X command in the default shell
 ### while X C Y

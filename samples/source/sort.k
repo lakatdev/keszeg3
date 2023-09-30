@@ -2,8 +2,6 @@ rout main
     print string n:
     input num length
 
-    array numbers length
-
     set i 0
     while i < length
         set disp i
@@ -47,6 +45,4 @@ rout main
     end
 
     print string \n
-
-    free numbers
 return

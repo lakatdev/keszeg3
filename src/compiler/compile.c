@@ -391,7 +391,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (memcmp("==", condition, condition_length) == 0) {
+        else if (memcmp("=", condition, condition_length) == 0) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};

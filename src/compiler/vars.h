@@ -18,7 +18,7 @@ int arrays_length = 0;
 int get_var_id(char* name, int length) {
 
     for (int i = 0; i < variables_length; i++) {
-        if (memcmp(vars[i].name, name, length) == 0) { //a vars[i] az segfault
+        if (memcmp(vars[i].name, name, length) == 0) {
             return i;
         }
     }
