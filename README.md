@@ -139,6 +139,8 @@ Indicates end of *if* conditions and *while* loops.
 Sets the (Y - 1)th value of the X array to Z. Resizes the array if it is not large enough.
 ### arrget X Y Z
 Sets the X variable to the (Z - 1)th value of the Y array, returns 0 if Z is out of bounds.
+### arrsize X Y
+Sets the X variable to the current size of the Y array.
 ### inc X (Y)
 Increases the X variable by Y if Y is specified, if not then by 1.
 ### dec X (Y)

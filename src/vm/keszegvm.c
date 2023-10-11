@@ -838,5 +838,11 @@ void execute(instruction* instruction) {
             execution_state = pop(); //talan offbyone lesz vagy itt vagy a pushnal
             break;
         }
+        case (ARRSIZE): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            variables[*c1] = array_lengths[*c2];
+            break;
+        }
     }
 }

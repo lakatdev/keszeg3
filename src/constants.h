@@ -39,9 +39,6 @@
 #define ADD_VN 0x1E
 #define ADD_VV 0x1F
 
-#define ARRAY_N 0x20
-#define ARRAY_V 0x45
-
 #define SUB_NN 0x21
 #define SUB_NV 0x22
 #define SUB_VN 0x23
@@ -101,5 +98,7 @@
 
 #define PUSHJUMP 0x48
 #define RET 0x49
+
+#define ARRSIZE 0x20
 
 #endif
