@@ -63,8 +63,8 @@
 #define PRINT_STRING 0x31
 
 #define INPUT_NUM 0x32
-
 #define INPUT_ASCII 0x33
+#define INPUT_STRING 0x45
 
 #define MOD_NN 0x34
 #define MOD_NV 0x35

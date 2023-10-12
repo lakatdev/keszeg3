@@ -650,6 +650,10 @@ void handle_line(line_t* line) {
             int args = get_var_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_ASCII, 4, add_int_arguments(&args, 1));
         }
+        else if (case_insensitive_compare("string", mode, mode_length)) {
+            int args = get_arr_id(line->data[2].data, line->data[2].length);
+            add_instruction(INPUT_STRING, 4, add_int_arguments(&args, 1));
+        }
     }
     else if (case_insensitive_compare("mod", instr, instr_length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {

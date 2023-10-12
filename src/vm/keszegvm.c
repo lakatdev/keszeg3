@@ -835,13 +835,37 @@ void execute(instruction* instruction) {
             break;
         }
         case (RET): {
-            execution_state = pop(); //talan offbyone lesz vagy itt vagy a pushnal
+            execution_state = pop();
             break;
         }
         case (ARRSIZE): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
             int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
             variables[*c1] = array_lengths[*c2];
+            break;
+        }
+        case (INPUT_STRING): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+
+            char buffer[256]; //string input can only read up to 256 characters
+            int chars_read = scanf("%255s", buffer);
+            if (chars_read != 1) {
+                break;
+            }
+
+            int string_len = strlen(buffer);
+            if (arrays[*c1] != NULL) {
+                arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (array_lengths[*c1] + string_len));
+            }
+            else {
+                arrays[*c1] = malloc(sizeof(int) * (array_lengths[*c1] + string_len));
+            }
+            
+            for (int i = 0; i < string_len; i++) {
+                arrays[*c1][array_lengths[*c1] + i] = buffer[i];
+            }
+
+            array_lengths[*c1] += string_len;
             break;
         }
     }
