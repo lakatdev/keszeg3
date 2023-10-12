@@ -198,3 +198,6 @@ Sets the X variable to the current size of the Y array.
 
 ### free X
 Empties an array, clears its content.
+
+### cat X Y
+Concatenates data after the parameter as a string to the X array.

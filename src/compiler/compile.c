@@ -827,4 +827,26 @@ void handle_line(line_t* line) {
         int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_arr_id(line->data[2].data, line->data[2].length)};
         add_instruction(ARRSIZE, 8, add_int_arguments(args, 2));
     }
+    else if (case_insensitive_compare("cat", instr, instr_length)) {
+        int args = {get_arr_id(line->data[1].data, line->data[1].length)};
+
+        char* tmp = malloc(0);
+        int length = 0;
+        for (int i = 2; i < line->length; i++) {
+            tmp = realloc(tmp, length + line->data[i].length);
+            memcpy(&tmp[length], line->data[i].data, line->data[i].length);
+            length += line->data[i].length;
+
+            if (i != line->length - 1) {
+                tmp = realloc(tmp, length + 1);
+                tmp[length] = ' ';
+                length++;
+            }
+        }
+
+        length = convert_chars(tmp, length);
+        add_instruction(CAT, 4 + length, add_int_arguments(&args, 1));
+        add_bytes_argument(tmp, length);
+        free(tmp);
+    }
 }

@@ -847,13 +847,31 @@ void execute(instruction* instruction) {
         case (INPUT_STRING): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
 
-            char buffer[256]; //string input can only read up to 256 characters
-            int chars_read = scanf("%255s", buffer);
-            if (chars_read != 1) {
-                break;
+            char buffer[256]; //string input can only read up to 254 characters
+            fgets(buffer, 256, stdin);
+
+            int string_len = strlen(buffer) - 1;
+            if (arrays[*c1] != NULL) {
+                arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (array_lengths[*c1] + string_len));
+            }
+            else {
+                arrays[*c1] = malloc(sizeof(int) * (array_lengths[*c1] + string_len));
+            }
+            
+            for (int i = 0; i < string_len && buffer[i] != '\n'; i++) {
+                arrays[*c1][array_lengths[*c1] + i] = buffer[i];
             }
 
-            int string_len = strlen(buffer);
+            array_lengths[*c1] += string_len;
+            break;
+        }
+        case (CAT): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+
+            int string_len = instruction->argsize - 4;
+            char* str = malloc(string_len);
+            memcpy(str, &arguments[instruction->args + 4], string_len);
+
             if (arrays[*c1] != NULL) {
                 arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (array_lengths[*c1] + string_len));
             }
@@ -862,7 +880,7 @@ void execute(instruction* instruction) {
             }
             
             for (int i = 0; i < string_len; i++) {
-                arrays[*c1][array_lengths[*c1] + i] = buffer[i];
+                arrays[*c1][array_lengths[*c1] + i] = str[i];
             }
 
             array_lengths[*c1] += string_len;

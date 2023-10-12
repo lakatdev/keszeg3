@@ -65,6 +65,7 @@
 #define INPUT_NUM 0x32
 #define INPUT_ASCII 0x33
 #define INPUT_STRING 0x45
+#define CAT 0x4A
 
 #define MOD_NN 0x34
 #define MOD_NV 0x35
@@ -80,6 +81,8 @@
 
 #define ARRGET_N 0x3D
 #define ARRGET_V 0x3E
+
+#define ARRSIZE 0x20
 
 #define INC_N 0x3F
 #define INC_V 0x40
@@ -98,7 +101,5 @@
 
 #define PUSHJUMP 0x48
 #define RET 0x49
-
-#define ARRSIZE 0x20
 
 #endif
