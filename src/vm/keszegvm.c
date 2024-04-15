@@ -113,10 +113,10 @@ int main(int argc, char** argv) {
     memset(string_lengths, 0, sizeof(int) * *num_strings);
 
     instructions = malloc(*num_instructions * sizeof(instruction));
-    memcpy(instructions, &buffer[sizeof(int) * 3], *num_instructions * sizeof(instruction));
+    memcpy(instructions, &buffer[sizeof(int) * 4], *num_instructions * sizeof(instruction));
 
-    arguments = malloc(length - sizeof(int) * 3 - *num_instructions * sizeof(instruction));
-    memcpy(arguments, &buffer[sizeof(int) * 3 + *num_instructions * sizeof(instruction)], length - sizeof(int) * 3 - *num_instructions * sizeof(instruction));
+    arguments = malloc(length - sizeof(int) * 4 - *num_instructions * sizeof(instruction));
+    memcpy(arguments, &buffer[sizeof(int) * 4 + *num_instructions * sizeof(instruction)], length - sizeof(int) * 4 - *num_instructions * sizeof(instruction));
 
     for (execution_state = 0; execution_state < *num_instructions; execution_state++) {
         execute(&instructions[execution_state]);
