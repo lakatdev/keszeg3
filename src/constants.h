@@ -60,7 +60,8 @@
 #define PRINT_ASCII_N 0x2F
 #define PRINT_ASCII_V 0x30
 
-#define PRINT_STRING 0x31
+#define PRINT_STRING 0x52
+#define PRINT_CONST_STRING 0x31
 
 #define INPUT_NUM 0x32
 #define INPUT_ASCII 0x33
@@ -84,6 +85,16 @@
 
 #define ARRSIZE 0x20
 
+#define STRSET_NN 0x4B
+#define STRSET_NV 0x4C
+#define STRSET_VN 0x4D
+#define STRSET_VV 0x4E
+
+#define STRGET_N 0x4F
+#define STRGET_V 0x50
+
+#define STRSIZE 0x51
+
 #define INC_N 0x3F
 #define INC_V 0x40
 
@@ -93,6 +104,7 @@
 #define JUMP 0x1
 
 #define FREE_ARRAY 0x43
+#define FREE_STRING 0x53
 
 #define EXEC 0x44
 

@@ -158,16 +158,19 @@ Declares X subroutine.
 ## Input/Output operations
 
 ### print P X
-The print instruction has 3 different options:
+The print instruction has 4 different options:
 - num
 - ascii
 - string
+- const
 
 The *num* option prints the numerical value of the constant or the variable.
 
 The *ascii* option print the corresponding ascii character to the numerical value of a constant or a variable.
 
-The *string* option prints everything written after the instruction's parameter.
+The *string* option prints the data stored in the referenced string.
+
+The *const* option prints everything written after the instruction's parameter.
 ### input P X
 This instruction has 3 different options:
 - num
@@ -178,7 +181,7 @@ The *num* option receives a number input and places the value in X variable.
 
 The *ascii* option receives a character as input and places its ascii value in the X variable.
 
-The *string* option receives a string input and loads it into the X array.
+The *string* option receives a string input and loads it into the X string.
 
 ### save X Y
 Saves contents of X array to Y file (path is relative to the vm).
@@ -196,8 +199,23 @@ Sets the X variable to the (Z - 1)th value of the Y array, returns 0 if Z is out
 ### arrsize X Y
 Sets the X variable to the current size of the Y array.
 
-### free X
-Empties an array, clears its content.
+### strset X Y Z
+Sets the (Y - 1)th value of the X string to Z. Resizes the string if it is not large enough.
+
+### strget X Y Z
+Sets the X variable to the (Z - 1)th value of the Y string, returns 0 if Z is out of bounds.
+
+### strsize X Y
+Sets the X variable to the current size of the Y string.
+
+### free P X
+The free instruction has 2 different options:
+- array
+- string
+
+The *array* option empties an array, clears its content.
+
+The *string* option empties a string, clears its content.
 
 ### cat X Y
 Concatenates data after the parameter as a string to the X array.

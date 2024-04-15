@@ -15,7 +15,7 @@ rout main
     print num sqrt
     mul sqrt sqrt 100
     sub disp disp sqrt
-    print string .
+    print const .
     print num disp
-    print string \n
+    print const \n
 return

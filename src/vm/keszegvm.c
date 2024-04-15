@@ -14,6 +14,8 @@ typedef struct {
 int* variables;
 int** arrays;
 int* array_lengths;
+char** strings;
+int* string_lengths;
 
 int stack_top = -1;
 int stack[STACK_SIZE];
@@ -96,13 +98,19 @@ int main(int argc, char** argv) {
     int* num_instructions = parse_int_pointer(buffer);
     int* num_vars = parse_int_pointer(&buffer[4]);
     int* num_arrays = parse_int_pointer(&buffer[8]);
+    int* num_strings = parse_int_pointer(&buffer[12]);
 
     variables = malloc(sizeof(int) * *num_vars);
     arrays = malloc(sizeof(int*) * *num_arrays);
     memset(arrays, 0, sizeof(int*) * *num_arrays);
+    strings = malloc(sizeof(char*) * *num_strings);
+    memset(strings, 0, sizeof(char*) * *num_strings);
 
     array_lengths = malloc(sizeof(int) * *num_arrays);
     memset(array_lengths, 0, sizeof(int) * *num_arrays);
+
+    string_lengths = malloc(sizeof(int) * *num_strings);
+    memset(string_lengths, 0, sizeof(int) * *num_strings);
 
     instructions = malloc(*num_instructions * sizeof(instruction));
     memcpy(instructions, &buffer[sizeof(int) * 3], *num_instructions * sizeof(instruction));
@@ -123,10 +131,18 @@ int main(int argc, char** argv) {
         }
     }
 
+    for (int i = 0; i < *num_strings; i++) {
+        if (strings[i] != NULL) {
+            free(strings[i]);
+        }
+    }
+
     free(buffer);
     free(variables);
     free(arrays);
     free(array_lengths);
+    free(strings);
+    free(string_lengths);
 
     return 0;
 }
@@ -569,7 +585,7 @@ void execute(instruction* instruction) {
             
             break;
         }
-        case (PRINT_STRING): {
+        case (PRINT_CONST_STRING): {
             char* str = malloc(instruction->argsize + 1);
             memcpy(str, &arguments[instruction->args], instruction->argsize);
             str[instruction->argsize] = '\0';
@@ -851,18 +867,18 @@ void execute(instruction* instruction) {
             fgets(buffer, 256, stdin);
 
             int string_len = strlen(buffer) - 1;
-            if (arrays[*c1] != NULL) {
-                arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (array_lengths[*c1] + string_len));
+            if (strings[*c1] != NULL) {
+                strings[*c1] = realloc(strings[*c1], sizeof(int) * (string_lengths[*c1] + string_len));
             }
             else {
-                arrays[*c1] = malloc(sizeof(int) * (array_lengths[*c1] + string_len));
+                strings[*c1] = malloc(sizeof(int) * (string_lengths[*c1] + string_len));
             }
             
             for (int i = 0; i < string_len && buffer[i] != '\n'; i++) {
-                arrays[*c1][array_lengths[*c1] + i] = buffer[i];
+                strings[*c1][string_lengths[*c1] + i] = buffer[i];
             }
 
-            array_lengths[*c1] += string_len;
+            string_lengths[*c1] += string_len;
             break;
         }
         case (CAT): {
@@ -872,18 +888,145 @@ void execute(instruction* instruction) {
             char* str = malloc(string_len);
             memcpy(str, &arguments[instruction->args + 4], string_len);
 
-            if (arrays[*c1] != NULL) {
-                arrays[*c1] = realloc(arrays[*c1], sizeof(int) * (array_lengths[*c1] + string_len));
+            if (strings[*c1] != NULL) {
+                strings[*c1] = realloc(strings[*c1], sizeof(int) * (string_lengths[*c1] + string_len));
             }
             else {
-                arrays[*c1] = malloc(sizeof(int) * (array_lengths[*c1] + string_len));
+                strings[*c1] = malloc(sizeof(int) * (string_lengths[*c1] + string_len));
             }
             
             for (int i = 0; i < string_len; i++) {
-                arrays[*c1][array_lengths[*c1] + i] = str[i];
+                strings[*c1][string_lengths[*c1] + i] = str[i];
             }
 
-            array_lengths[*c1] += string_len;
+            string_lengths[*c1] += string_len;
+            break;
+        }
+        case (STRSIZE): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            variables[*c1] = string_lengths[*c2];
+            break;
+        }
+        case (STRSET_NN): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (*c2 < 0) {
+                break;
+            }
+            else if (*c2 >= string_lengths[*c1]) {
+                if (strings[*c1] != NULL) {
+                    strings[*c1] = realloc(strings[*c1], sizeof(char) * (*c2 + 1));
+                }
+                else {
+                    strings[*c1] = malloc(sizeof(char) * (*c2 + 1));
+                }
+                string_lengths[*c1] = *c2 + 1;
+            }
+
+            strings[*c1][*c2] = *c3;
+
+            break;
+        }
+        case (STRSET_NV): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (*c2 < 0) {
+                break;
+            }
+            else if (*c2 >= string_lengths[*c1]) {
+                if (strings[*c1] != NULL) {
+                    strings[*c1] = realloc(strings[*c1], sizeof(char) * (*c2 + 1));
+                }
+                else {
+                    strings[*c1] = malloc(sizeof(char) * (*c2 + 1));
+                }
+                string_lengths[*c1] = *c2 + 1;
+            }
+
+            strings[*c1][*c2] = variables[*c3];
+
+            break;
+        }
+        case (STRSET_VN): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (variables[*c2] < 0) {
+                break;
+            }
+            else if (variables[*c2] >= string_lengths[*c1]) {
+                if (strings[*c1] != NULL) {
+                    strings[*c1] = realloc(strings[*c1], sizeof(char) * (variables[*c2] + 1));
+                }
+                else {
+                    strings[*c1] = malloc(sizeof(char) * (variables[*c2] + 1));
+                }
+                string_lengths[*c1] = variables[*c2] + 1;
+            }
+
+            strings[*c1][variables[*c2]] = *c3;
+
+            break;
+        }
+        case (STRSET_VV): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (variables[*c2] < 0) {
+                break;
+            }
+            else if (variables[*c2] >= string_lengths[*c1]) {
+                if (strings[*c1] != NULL) {
+                    strings[*c1] = realloc(strings[*c1], sizeof(char) * (variables[*c2] + 1));
+                }
+                else {
+                    strings[*c1] = malloc(sizeof(char) * (variables[*c2] + 1));
+                }
+                string_lengths[*c1] = variables[*c2] + 1;
+            }
+
+            strings[*c1][variables[*c2]] = variables[*c3];
+
+            break;
+        }
+        case (STRGET_N): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (*c3 >= string_lengths[*c2] || *c3 < 0) {
+                variables[*c1] = 0;
+                break;
+            }
+            variables[*c1] = strings[*c2][*c3];
+
+            break;
+        }
+        case (STRGET_V): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+            int* c3 = parse_int_pointer(&arguments[instruction->args + 8]);
+
+            if (variables[*c3] >= string_lengths[*c2] || variables[*c3] < 0) {
+                variables[*c1] = 0;
+                break;
+            }
+            variables[*c1] = strings[*c2][variables[*c3]];
+
+            break;
+        }
+        case (PRINT_STRING): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            for (int i = 0; i < string_lengths[*c1]; i++) {
+                printf("%c", strings[*c1][i]);
+            }
             break;
         }
     }

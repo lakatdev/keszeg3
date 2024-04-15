@@ -1,5 +1,5 @@
 rout main
-    print string n:
+    print const n:
     input num length
 
     set i 0
@@ -7,7 +7,7 @@ rout main
         set disp i
         inc disp
         print num disp
-        print string .:
+        print const .:
         input num tmp
         arrset numbers i tmp
         inc i
@@ -44,5 +44,5 @@ rout main
         inc i
     end
 
-    print string \n
+    print const \n
 return

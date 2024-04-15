@@ -4,5 +4,5 @@ rout main
         print ascii index
         inc index
     end
-    print string \n
+    print const \n
 return
