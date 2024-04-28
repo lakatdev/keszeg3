@@ -183,10 +183,22 @@ The *ascii* option receives a character as input and places its ascii value in t
 
 The *string* option receives a string input and loads it into the X string.
 
-### save X Y
-Saves contents of X array to Y file (path is relative to the vm).
-### load X Y
-Loads contents from Y file to X array (path is relative to the vm).
+### save P X Y
+The save instruction has 2 different options:
+- array
+- string
+
+The *array* option saves contents of X array to Y file (path is relative to the vm).
+
+The *string* option saves contents of X string to Y file (path is relative to the vm).
+### load P X Y
+The load instruction has 2 different options:
+- array
+- string
+
+The *array* option loads contents from Y file to X array (path is relative to the vm).
+
+The *string* option loads contents from Y file to X string (path is relative to the vm).
 
 ## Arrays
 

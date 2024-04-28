@@ -789,9 +789,13 @@ void handle_line(line_t* line) {
         free(tmp);
     }
     else if (case_insensitive_compare("load", instr, instr_length)) {
+        int mode_length = line->data[1].length;
+        char mode[mode_length];
+        memcpy(&mode, line->data[1].data, mode_length);
+
         char* tmp = malloc(0);
         int length = 0;
-        for (int i = 2; i < line->length; i++) {
+        for (int i = 3; i < line->length; i++) {
             tmp = realloc(tmp, length + line->data[i].length);
             memcpy(&tmp[length], line->data[i].data, line->data[i].length);
             length += line->data[i].length;
@@ -804,16 +808,26 @@ void handle_line(line_t* line) {
         }
         length = convert_chars(tmp, length);
 
-        int args[1] = {get_arr_id(line->data[1].data, line->data[1].length)};
-        
-        add_instruction(LOAD, 4 + length, add_int_arguments(args, 1));
+        if (case_insensitive_compare("array", mode, mode_length)) {
+            int args[1] = {get_arr_id(line->data[2].data, line->data[2].length)};
+            add_instruction(LOAD_ARRAY, 4 + length, add_int_arguments(args, 1));
+        }
+        else if (case_insensitive_compare("string", mode, mode_length)) {
+            int args[1] = {get_str_id(line->data[2].data, line->data[2].length)};
+            add_instruction(LOAD_STRING, 4 + length, add_int_arguments(args, 1));
+        }
+
         add_bytes_argument(tmp, length);
         free(tmp);
     }
     else if (case_insensitive_compare("save", instr, instr_length)) {
+        int mode_length = line->data[1].length;
+        char mode[mode_length];
+        memcpy(&mode, line->data[1].data, mode_length);
+
         char* tmp = malloc(0);
         int length = 0;
-        for (int i = 2; i < line->length; i++) {
+        for (int i = 3; i < line->length; i++) {
             tmp = realloc(tmp, length + line->data[i].length);
             memcpy(&tmp[length], line->data[i].data, line->data[i].length);
             length += line->data[i].length;
@@ -826,9 +840,15 @@ void handle_line(line_t* line) {
         }
         length = convert_chars(tmp, length);
 
-        int args[1] = {get_arr_id(line->data[1].data, line->data[1].length)};
-        
-        add_instruction(SAVE, 4 + length, add_int_arguments(args, 1));
+        if (case_insensitive_compare("array", mode, mode_length)) {
+            int args[1] = {get_arr_id(line->data[2].data, line->data[2].length)};
+            add_instruction(SAVE_ARRAY, 4 + length, add_int_arguments(args, 1));
+        }
+        else if (case_insensitive_compare("string", mode, mode_length)) {
+            int args[1] = {get_str_id(line->data[2].data, line->data[2].length)};
+            add_instruction(SAVE_STRING, 4 + length, add_int_arguments(args, 1));
+        }
+
         add_bytes_argument(tmp, length);
         free(tmp);
     }

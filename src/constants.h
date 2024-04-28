@@ -108,8 +108,11 @@
 
 #define EXEC 0x44
 
-#define LOAD 0x46
-#define SAVE 0x47
+#define LOAD_ARRAY 0x46
+#define SAVE_ARRAY 0x47
+
+#define LOAD_STRING 0x54
+#define SAVE_STRING 0x55
 
 #define PUSHJUMP 0x48
 #define RET 0x49
