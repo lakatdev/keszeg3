@@ -1,47 +1,46 @@
 rout main
     print const n:
-    input num length
+    input $ length
 
-    set i 0
+    i = 0
     while i < length
-        set disp i
-        inc disp
-        print num disp
+        disp = i
+        disp +=
+        print $ disp
         print const .:
-        input num tmp
-        arrset numbers i tmp
-        inc i
+        input $ tmp
+        numbers : i <= tmp
+        i +=
     end
 
-    set nm length
-    dec nm
-    set i 0
+    nm = length
+    nm -=
+    i = 0
     while i < nm
-        set secit nm
-        sub secit nm i
-        set j 0
+        secit = nm - i
+        j = 0
         while j < secit
-            arrget this numbers j
-            inc j
-            arrget next numbers j
-            dec j
+            this <= numbers : j
+            j +=
+            next <= numbers : j
+            j -=
             if this > next
-                arrset numbers j next
-                inc j
-                arrset numbers j this
-                dec j
+                numbers : j <= next
+                j +=
+                numbers : j <= this
+                j -=
             end
-            inc j
+            j +=
         end
-        inc i
+        i +=
     end
 
-    set i 0
+    i = 0
     while i < length
-        arrget disp numbers i
-        print num disp
+        disp <= numbers : i
+        print $ disp
         print ascii 32
-        inc i
+        i +=
     end
 
     print const \n

@@ -1,8 +1,8 @@
 rout main
-    set index 33
+    index = 33
     while index < 127
         print ascii index
-        inc index
+        index +=
     end
     print const \n
 return

@@ -29,7 +29,7 @@ typedef  struct {
 void replace_char(char* str, unsigned int length, char og, char to) {
     for (int i = 0; i < length; i++) {
         if (str[i] == og) {
-            str[i] == to;
+            str[i] = to;
         }
     }
 }

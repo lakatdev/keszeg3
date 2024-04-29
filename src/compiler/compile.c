@@ -84,9 +84,12 @@ int tolower(int c) {
 /*
     Compares two strings case insensitively
 */
-bool case_insensitive_compare(const char* str1, const char* str2, int len) {
-    int i;
-    for (i = 0; i < len; i++) {
+bool case_insensitive_compare(const char* str1, const char* str2, int len1, int len2) {
+    if (len1 != len2) {
+        return false;
+    }
+
+    for (int i = 0; i < len1; i++) {
         if (tolower(str1[i]) != tolower(str2[i])) {
             return false;
         }
@@ -221,11 +224,11 @@ int find_end(lines_list_t* lines, int position) {
         char token[token_length];
         memcpy(token, lines->data[seek_position].data[0].data, token_length);
 
-        if (case_insensitive_compare("if", token, token_length) ||
-            case_insensitive_compare("while", token, token_length)) {
+        if (case_insensitive_compare("if", token, strlen("if"), token_length) ||
+            case_insensitive_compare("while", token, strlen("while"), token_length)) {
             newifs++;
         }
-        if (case_insensitive_compare("end", token, token_length)) {
+        if (case_insensitive_compare("end", token, strlen("end"), token_length)) {
             newifs--;
         }
     }
@@ -261,7 +264,7 @@ void precompile(lines_list_t* lines) {
         char token[token_length];
         memcpy(token, lines->data[i].data[0].data, token_length);
 
-        if (case_insensitive_compare("while", token, token_length)) {
+        if (case_insensitive_compare("while", token, strlen("while"), token_length)) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 2);
             memcpy(lines->data[i].data[0].data, "if", 2);
             lines->data[i].data[0].length = 2;
@@ -296,7 +299,7 @@ void precompile(lines_list_t* lines) {
 
             precompile(lines);
         }
-        else if (case_insensitive_compare("rout", token, token_length)) {
+        else if (case_insensitive_compare("rout", token, strlen("rout"), token_length)) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 4);
             memcpy(lines->data[i].data[0].data, "flag", 4);
             lines->data[i].data[0].length = 4;
@@ -314,7 +317,7 @@ void process_flags(lines_list_t* lines) {
         char token[token_length];
         memcpy(token, lines->data[i].data[0].data, token_length);
 
-        if (case_insensitive_compare("flag", token, token_length)) {
+        if (case_insensitive_compare("flag", token, strlen("flag"), token_length)) {
             add_flag(lines->data[i].data[1].data, lines->data[i].data[1].length, i);
         }
     }
@@ -354,26 +357,23 @@ void print_lines(lines_list_t* lines) {
     Handles given line
 */
 void handle_line(line_t* line) {
-    int instr_length = line->data[0].length;
-    char instr[instr_length];
-    memcpy(&instr, line->data[0].data, instr_length);
 
-    if (case_insensitive_compare("set", instr, instr_length)) {
+    if (line->length == 3 && case_insensitive_compare("=", line->data[1].data, strlen("="), line->data[1].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
+            int args[2] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
             add_instruction(SET_N, 8, add_int_arguments(args, 2));
         }
         else {
-            int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length)};
+            int args[2] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length)};
             add_instruction(SET_V, 8, add_int_arguments(args, 2));
         }
     }
-    else if (case_insensitive_compare("if", instr, instr_length)) {
+    else if (case_insensitive_compare("if", line->data[0].data, strlen("if"), line->data[0].length)) {
         int condition_length = line->data[2].length;
         char condition[condition_length];
         memcpy(&condition, line->data[2].data, condition_length);
 
-        if (case_insensitive_compare(">", condition, condition_length)) {
+        if (case_insensitive_compare(">", condition, strlen(">"), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -395,7 +395,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (case_insensitive_compare("<", condition, condition_length)) {
+        else if (case_insensitive_compare("<", condition, strlen("<"), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -417,7 +417,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (case_insensitive_compare("=", condition, condition_length)) {
+        else if (case_insensitive_compare("=", condition, strlen("="), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -439,7 +439,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (case_insensitive_compare("!=", condition, condition_length)) {
+        else if (case_insensitive_compare("!=", condition, strlen("!="), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -461,7 +461,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (case_insensitive_compare("<=", condition, condition_length)) {
+        else if (case_insensitive_compare("<=", condition, strlen("<="), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -483,7 +483,7 @@ void handle_line(line_t* line) {
                 }
             }
         }
-        else if (case_insensitive_compare(">=", condition, condition_length)) {
+        else if (case_insensitive_compare(">=", condition, strlen(">="), condition_length)) {
             if (is_number(line->data[1].data, line->data[1].length)) {
                 if (is_number(line->data[3].data, line->data[3].length)) {
                     int args[2] = {to_int(insert_null(line->data[1].data, line->data[1].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
@@ -506,100 +506,100 @@ void handle_line(line_t* line) {
             }
         }
     }
-    else if (case_insensitive_compare("add", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("+", line->data[3].data, strlen("+"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(ADD_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(ADD_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(ADD_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(ADD_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("sub", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("-", line->data[3].data, strlen("-"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(SUB_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(SUB_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(SUB_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(SUB_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("mul", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("*", line->data[3].data, strlen("*"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(MUL_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(MUL_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(MUL_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(MUL_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("div", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("/", line->data[3].data, strlen("/"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(DIV_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(DIV_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(DIV_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(DIV_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("print", instr, instr_length)) {
+    else if (case_insensitive_compare("print", line->data[0].data, strlen("print"), line->data[0].length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
 
-        if (case_insensitive_compare("num", mode, mode_length)) {
+        if (case_insensitive_compare("$", mode, strlen("$"), mode_length)) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 int args = to_int(insert_null(line->data[2].data, line->data[2].length));
                 add_instruction(PRINT_NUM_N, 4, add_int_arguments(&args, 1));
@@ -609,7 +609,7 @@ void handle_line(line_t* line) {
                 add_instruction(PRINT_NUM_V, 4, add_int_arguments(&args, 1));
             }
         }
-        else if (case_insensitive_compare("ascii", mode, mode_length)) {
+        else if (case_insensitive_compare("ascii", mode, strlen("ascii"), mode_length)) {
             if (is_number(line->data[2].data, line->data[2].length)) {
                 char args = to_int(insert_null(line->data[2].data, line->data[2].length)) & 0xFF;
                 add_instruction(PRINT_ASCII_N, 1, add_bytes_argument(&args, 1));
@@ -619,7 +619,7 @@ void handle_line(line_t* line) {
                 add_instruction(PRINT_ASCII_V, 4, add_int_arguments(&args, 1));
             }
         }
-        else if (case_insensitive_compare("const", mode, mode_length)) {
+        else if (case_insensitive_compare("const", mode, strlen("const"), mode_length)) {
             char* tmp = malloc(0);
             int length = 0;
             for (int i = 2; i < line->length; i++) {
@@ -637,140 +637,140 @@ void handle_line(line_t* line) {
             add_instruction(PRINT_CONST_STRING, length, add_bytes_argument(tmp, length));
             free(tmp);
         }
-        else if (case_insensitive_compare("string", mode, mode_length)) {
+        else if (case_insensitive_compare("string", mode, strlen("string"), mode_length)) {
             int args = get_str_id(line->data[2].data, line->data[2].length);
             add_instruction(PRINT_STRING, 4, add_int_arguments(&args, 1));
         }
     }
-    else if (case_insensitive_compare("input", instr, instr_length)) {
+    else if (case_insensitive_compare("input", line->data[0].data, strlen("input"), line->data[0].length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
 
-        if (case_insensitive_compare("num", mode, mode_length)) {
+        if (case_insensitive_compare("$", mode, strlen("$"), mode_length)) {
             int args = get_var_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_NUM, 4, add_int_arguments(&args, 1));
         }
-        else if (case_insensitive_compare("ascii", mode, mode_length)) {
+        else if (case_insensitive_compare("ascii", mode, strlen("ascii"), mode_length)) {
             int args = get_var_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_ASCII, 4, add_int_arguments(&args, 1));
         }
-        else if (case_insensitive_compare("string", mode, mode_length)) {
+        else if (case_insensitive_compare("string", mode, strlen("string"), mode_length)) {
             int args = get_str_id(line->data[2].data, line->data[2].length);
             add_instruction(INPUT_STRING, 4, add_int_arguments(&args, 1));
         }
     }
-    else if (case_insensitive_compare("mod", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("%", line->data[3].data, strlen("%"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(MOD_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(MOD_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(MOD_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(MOD_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("end", instr, instr_length)) {
+    else if (case_insensitive_compare("end", line->data[0].data, strlen("end"), line->data[0].length)) {
         add_instruction(END, 0, 0);
     }
-    else if (case_insensitive_compare("arrset", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("<=", line->data[3].data, strlen("<="), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_arr_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_arr_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(ARRSET_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_arr_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_arr_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(ARRSET_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_arr_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_arr_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(ARRSET_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_arr_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_arr_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(ARRSET_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("arrget", instr, instr_length)) {
-        if (is_number(line->data[3].data, line->data[3].length)) {
-            int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_arr_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+    else if (line->length == 5 && case_insensitive_compare("<=", line->data[1].data, strlen("<="), line->data[1].length)) {
+        if (is_number(line->data[4].data, line->data[4].length)) {
+            int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_arr_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
             add_instruction(ARRGET_N, 12, add_int_arguments(args, 3));
         }
         else {
-            int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_arr_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+            int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_arr_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
             add_instruction(ARRGET_V, 12, add_int_arguments(args, 3));
         }
     }
-    else if (case_insensitive_compare("inc", instr, instr_length)) {
+    else if (line->length >= 2 && case_insensitive_compare("+=", line->data[1].data, strlen("+="), line->data[1].length)) {
         if (line->length >= 3) {
             if (is_number(line->data[2].data, line->data[2].length)) {
-                int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
+                int args[2] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
                 add_instruction(INC_N, 8, add_int_arguments(args, 2));
             }
             else {
-                int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length)};
+                int args[2] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length)};
                 add_instruction(INC_V, 8, add_int_arguments(args, 2));
             }
             
         }
         else {
-            int args[2] = {get_var_id(line->data[1].data, line->data[1].length), 1};
+            int args[2] = {get_var_id(line->data[0].data, line->data[0].length), 1};
             add_instruction(INC_N, 8, add_int_arguments(args, 2));
         }
     }
-    else if (case_insensitive_compare("dec", instr, instr_length)) {
+    else if (line->length >= 2 && case_insensitive_compare("-=", line->data[1].data, strlen("-="), line->data[1].length)) {
         if (line->length >= 3) {
             if (is_number(line->data[2].data, line->data[2].length)) {
-                int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
+                int args[2] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
                 add_instruction(DEC_N, 8, add_int_arguments(args, 2));
             }
             else {
-                int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length)};
+                int args[2] = {get_var_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length)};
                 add_instruction(DEC_V, 8, add_int_arguments(args, 2));
             }
             
         }
         else {
-            int args[2] = {get_var_id(line->data[1].data, line->data[1].length), 1};
+            int args[2] = {get_var_id(line->data[0].data, line->data[0].length), 1};
             add_instruction(DEC_N, 8, add_int_arguments(args, 2));
         }
     }
-    else if (case_insensitive_compare("jump", instr, instr_length)) {
+    else if (case_insensitive_compare("jump", line->data[0].data, strlen("jump"), line->data[0].length)) {
         int args = get_flag_position(line->data[1].data, line->data[1].length);
         add_instruction(JUMP, 4, add_int_arguments(&args, 1));
     }
-    else if (case_insensitive_compare("free", instr, instr_length)) {
+    else if (case_insensitive_compare("free", line->data[0].data, strlen("free"), line->data[0].length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
 
-        if (case_insensitive_compare("array", mode, mode_length)) {
+        if (case_insensitive_compare("array", mode, strlen("array"), mode_length)) {
             int args = get_arr_id(line->data[2].data, line->data[2].length);
             add_instruction(FREE_ARRAY, 4, add_int_arguments(&args, 1));
         }
-        else if (case_insensitive_compare("string", mode, mode_length)) {
+        else if (case_insensitive_compare("string", mode, strlen("string"), mode_length)) {
             int args = get_str_id(line->data[2].data, line->data[2].length);
             add_instruction(FREE_STRING, 4, add_int_arguments(&args, 1));
         }
         
     }
-    else if (case_insensitive_compare("exec", instr, instr_length)) {
+    else if (case_insensitive_compare("exec", line->data[0].data, strlen("exec"), line->data[0].length)) {
         char* tmp = malloc(0);
         int length = 0;
         for (int i = 1; i < line->length; i++) {
@@ -788,7 +788,7 @@ void handle_line(line_t* line) {
         add_instruction(EXEC, length, add_bytes_argument(tmp, length));
         free(tmp);
     }
-    else if (case_insensitive_compare("load", instr, instr_length)) {
+    else if (case_insensitive_compare("load", line->data[0].data, strlen("load"), line->data[0].length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
@@ -808,11 +808,11 @@ void handle_line(line_t* line) {
         }
         length = convert_chars(tmp, length);
 
-        if (case_insensitive_compare("array", mode, mode_length)) {
+        if (case_insensitive_compare("array", mode, strlen("array"), mode_length)) {
             int args[1] = {get_arr_id(line->data[2].data, line->data[2].length)};
             add_instruction(LOAD_ARRAY, 4 + length, add_int_arguments(args, 1));
         }
-        else if (case_insensitive_compare("string", mode, mode_length)) {
+        else if (case_insensitive_compare("string", mode, strlen("string"), mode_length)) {
             int args[1] = {get_str_id(line->data[2].data, line->data[2].length)};
             add_instruction(LOAD_STRING, 4 + length, add_int_arguments(args, 1));
         }
@@ -820,7 +820,7 @@ void handle_line(line_t* line) {
         add_bytes_argument(tmp, length);
         free(tmp);
     }
-    else if (case_insensitive_compare("save", instr, instr_length)) {
+    else if (case_insensitive_compare("save", line->data[0].data, strlen("save"), line->data[0].length)) {
         int mode_length = line->data[1].length;
         char mode[mode_length];
         memcpy(&mode, line->data[1].data, mode_length);
@@ -840,11 +840,11 @@ void handle_line(line_t* line) {
         }
         length = convert_chars(tmp, length);
 
-        if (case_insensitive_compare("array", mode, mode_length)) {
+        if (case_insensitive_compare("array", mode, strlen("array"), mode_length)) {
             int args[1] = {get_arr_id(line->data[2].data, line->data[2].length)};
             add_instruction(SAVE_ARRAY, 4 + length, add_int_arguments(args, 1));
         }
-        else if (case_insensitive_compare("string", mode, mode_length)) {
+        else if (case_insensitive_compare("string", mode, strlen("string"), mode_length)) {
             int args[1] = {get_str_id(line->data[2].data, line->data[2].length)};
             add_instruction(SAVE_STRING, 4 + length, add_int_arguments(args, 1));
         }
@@ -852,18 +852,18 @@ void handle_line(line_t* line) {
         add_bytes_argument(tmp, length);
         free(tmp);
     }
-    else if (case_insensitive_compare("call", instr, instr_length)) {
+    else if (case_insensitive_compare("call", line->data[0].data, strlen("call"), line->data[0].length)) {
         int args = get_flag_position(line->data[1].data, line->data[1].length);
         add_instruction(PUSHJUMP, 4, add_int_arguments(&args, 1));
     }
-    else if (case_insensitive_compare("return", instr, instr_length)) {
+    else if (case_insensitive_compare("return", line->data[0].data, strlen("return"), line->data[0].length)) {
         add_instruction(RET, 0, 0);
     }
-    else if (case_insensitive_compare("arrsize", instr, instr_length)) {
+    else if (case_insensitive_compare("arrsize", line->data[0].data, strlen("arrsize"), line->data[0].length)) {
         int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_arr_id(line->data[2].data, line->data[2].length)};
         add_instruction(ARRSIZE, 8, add_int_arguments(args, 2));
     }
-    else if (case_insensitive_compare("cat", instr, instr_length)) {
+    else if (case_insensitive_compare("cat", line->data[0].data, strlen("cat"), line->data[0].length)) {
         int args = {get_str_id(line->data[1].data, line->data[1].length)};
 
         char* tmp = malloc(0);
@@ -885,39 +885,39 @@ void handle_line(line_t* line) {
         add_bytes_argument(tmp, length);
         free(tmp);
     }
-    else if (case_insensitive_compare("strset", instr, instr_length)) {
+    else if (line->length == 5 && case_insensitive_compare("<-", line->data[3].data, strlen("<-"), line->data[3].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_str_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_str_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(STRSET_NN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_str_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_str_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length)), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(STRSET_NV, 12, add_int_arguments(args, 3));
             }
         }
         else {
-            if (is_number(line->data[3].data, line->data[3].length)) {
-                int args[3] = {get_str_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+            if (is_number(line->data[4].data, line->data[4].length)) {
+                int args[3] = {get_str_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
                 add_instruction(STRSET_VN, 12, add_int_arguments(args, 3));
             }
             else {
-                int args[3] = {get_str_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+                int args[3] = {get_str_id(line->data[0].data, line->data[0].length), get_var_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
                 add_instruction(STRSET_VV, 12, add_int_arguments(args, 3));
             }
         }
     }
-    else if (case_insensitive_compare("strget", instr, instr_length)) {
-        if (is_number(line->data[3].data, line->data[3].length)) {
-            int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_str_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[3].data, line->data[3].length))};
+    else if (line->length == 5 && case_insensitive_compare("<-", line->data[1].data, strlen("<-"), line->data[1].length)) {
+        if (is_number(line->data[4].data, line->data[4].length)) {
+            int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_str_id(line->data[2].data, line->data[2].length), to_int(insert_null(line->data[4].data, line->data[4].length))};
             add_instruction(STRGET_N, 12, add_int_arguments(args, 3));
         }
         else {
-            int args[3] = {get_var_id(line->data[1].data, line->data[1].length), get_str_id(line->data[2].data, line->data[2].length), get_var_id(line->data[3].data, line->data[3].length)};
+            int args[3] = {get_var_id(line->data[0].data, line->data[0].length), get_str_id(line->data[2].data, line->data[2].length), get_var_id(line->data[4].data, line->data[4].length)};
             add_instruction(STRGET_V, 12, add_int_arguments(args, 3));
         }
     }
-    else if (case_insensitive_compare("strsize", instr, instr_length)) {
+    else if (case_insensitive_compare("strsize", line->data[0].data, strlen("strsize"), line->data[0].length)) {
         int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_str_id(line->data[2].data, line->data[2].length)};
         add_instruction(STRSIZE, 8, add_int_arguments(args, 2));
     }
