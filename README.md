@@ -199,7 +199,7 @@ The value of X is compared to the value of Y the way the condition describes.
 If the result is true the code between this *if* instruction and the corresponding *end* instruction will be executed.
 
 #### end
-Indicates end of *if* conditions and *while* loops.
+Indicates the end of *if* conditions and *while* loops.
 
 #### Flags
 A flag flags a position in the execution position. It is usually not needed.
