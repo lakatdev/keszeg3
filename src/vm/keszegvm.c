@@ -1076,5 +1076,16 @@ void execute(instruction* instruction) {
             }
             break;
         }
+        case (FREE_STRING): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+
+            if (strings[*c1] != NULL) {
+                free(strings[*c1]);
+                string_lengths[*c1] = 0;
+                strings[*c1] = NULL;
+            }
+
+            break;
+        }
     }
 }

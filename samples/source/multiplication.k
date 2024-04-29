@@ -1,11 +1,11 @@
 rout main
     print const x:
-    input num n1
+    input $ n1
 
     print const y:
-    input num n2
+    input $ n2
 
-    mul n1 n1 n2
-    print num n1
+    n1 = n1 * n2
+    print $ n1
     print const \n
 return
