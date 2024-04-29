@@ -11,7 +11,7 @@ Keszeg is a programming language with simplicity and clarity in mind. It is desi
   - [Compiling and running the code](#compiling-and-running-the-code)
   - [Writing code](#writing-code)
     - [Subroutines](#subroutines)
-    - [Commments](#commments)
+    - [Comments](#comments)
     - [Escaped characters](#escaped-characters)
     - [Variables, arrays and strings](#variables-arrays-and-strings)
   - [Instructions](#instructions)
@@ -22,7 +22,7 @@ Keszeg is a programming language with simplicity and clarity in mind. It is desi
       - [Multiplication](#multiplication)
       - [Division](#division)
       - [Modulo](#modulo)
-      - [Incrementation](#incrementation)
+      - [Increment](#increment)
       - [Decrement](#decrement)
     - [Control flow instructions](#control-flow-instructions)
       - [if conditions](#if-conditions)
@@ -87,7 +87,7 @@ return
 
 this prints "Hello World".
 
-### Commments
+### Comments
 In a line after the # character all text is ignored during compilation. These are comments.
 
 ```
@@ -168,7 +168,7 @@ Stores the ratio of Y and Z in the X variable.
 
 Stores Y mod Z value in the X variable.
 
-#### Incrementation
+#### Increment
 
 `X += Y` or `X +=`
 
@@ -206,7 +206,7 @@ A flag flags a position in the execution position. It is usually not needed.
 
 `flag beginning`
 
-Using `jump` the execution contines at the specified flag:
+Using `jump` the execution continues at the specified flag:
 
 `jump beginning`
  
@@ -217,7 +217,7 @@ Using `jump` the execution contines at the specified flag:
 #### while loops
 `while X condition Y`
 
-While loops wotk the same as *if* conditions, except they repeat execution until the condition is false.
+While loops work the same as *if* conditions, except they repeat execution until the condition is false.
 
 #### Calling and returning from a subroutine
 
