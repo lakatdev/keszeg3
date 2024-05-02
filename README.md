@@ -69,7 +69,7 @@ This binary can be executed using *keszegr*.
 `./keszegr binary`
 
 ## Writing code
-Code is written by giving the executor program instructions line by line. It is important to note that the language is case insensitive.
+Code is written by giving the executor program instructions line by line. It is important to note that the instructions in the language are case insensitive while subroutine and variable names are not.
 
 ### Subroutines
 
