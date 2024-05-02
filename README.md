@@ -202,7 +202,7 @@ If the result is true the code between this *if* instruction and the correspondi
 Indicates the end of *if* conditions and *while* loops.
 
 #### Flags
-A flag flags a position in the execution position. It is usually not needed.
+A flag flags a position in the execution sequence. It is usually not needed, most of its functionality can be achieved using while-loops, if-conditions and subroutines.
 
 `flag beginning`
 
