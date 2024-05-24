@@ -30,14 +30,16 @@ void execute(instruction*);
 /*
     Convert byte pointer to int pointer
 */
-int* parse_int_pointer(char* bytes) {
+int* parse_int_pointer(char* bytes)
+{
     return (int*)bytes;
 }
 
 /*
     Push int value to stack
 */
-void push(int value) {
+void push(int value)
+{
     if (stack_top == STACK_SIZE - 1) {
         return;
     }
@@ -47,7 +49,8 @@ void push(int value) {
 /*
     Pop value from stack
 */
-int pop() {
+int pop()
+{
     if (stack_top == -1) {
         return -1;
     }
@@ -57,7 +60,8 @@ int pop() {
 /*
     Finds the end of the "if" statement
 */
-int findEnd() {
+int findEnd()
+{
     int newifs = 1;
     int seek_position = execution_state;
 
@@ -79,14 +83,15 @@ int findEnd() {
     Main function
     Reads input file and sends it for execution
 */
-int main(int argc, char** argv) {
-    if (argc < 2) {
+int main(int argc, char** argv)
+{
+    /*if (argc < 2) {
         printf("Provide sufficient amount of arguments!\n");
         return 1;
-    }
+    }*/
 
     unsigned int length;
-    FILE* fptr = fopen(argv[1], "rb");
+    FILE* fptr = fopen(/*argv[1]*/"/home/fodor/Projects/keszeg3/sl", "rb");
     fseek(fptr, 0, SEEK_END);
     length = ftell(fptr);
     rewind(fptr);
@@ -150,7 +155,8 @@ int main(int argc, char** argv) {
 /*
     Executes given instruction
 */
-void execute(instruction* instruction) {
+void execute(instruction* instruction)
+{
     switch (instruction->type) {
         case (SET_N): {
             int* var = parse_int_pointer(&arguments[instruction->args]);
@@ -814,14 +820,14 @@ void execute(instruction* instruction) {
             fread(buffer, length, 1, load);
             fclose(load);
 
-            int arr_length = *buffer;
+            int arr_length = length / sizeof(int);
 
             if (arr_length != array_lengths[*c1]) {
                 arrays[*c1] = realloc(arrays[*c1], arr_length);
                 array_lengths[*c1] = arr_length;
             }
 
-            memcpy(arrays[*c1], &buffer[1], length - 4);
+            memcpy(arrays[*c1], buffer, length);
             
             free(buffer);
             free(str);
@@ -836,7 +842,6 @@ void execute(instruction* instruction) {
             str[instruction->argsize - 4] = '\0';
 
             FILE* save = fopen(str, "wb");
-            fwrite(&array_lengths[*c1], 4, 1, save);
             fwrite(arrays[*c1], sizeof(int) * array_lengths[*c1], 1, save);
             fclose(save);
 
@@ -857,18 +862,18 @@ void execute(instruction* instruction) {
             length = ftell(load);
             rewind(load);
 
-            int* buffer = malloc(length);
+            char* buffer = malloc(length);
             fread(buffer, length, 1, load);
             fclose(load);
 
-            int arr_length = *buffer;
+            int arr_length = length;
 
             if (arr_length != string_lengths[*c1]) {
                 strings[*c1] = realloc(strings[*c1], arr_length);
                 string_lengths[*c1] = arr_length;
             }
 
-            memcpy(strings[*c1], &buffer[1], length - 4);
+            memcpy(strings[*c1], buffer, length);
             
             free(buffer);
             free(str);
@@ -883,7 +888,6 @@ void execute(instruction* instruction) {
             str[instruction->argsize - 4] = '\0';
 
             FILE* save = fopen(str, "wb");
-            fwrite(&string_lengths[*c1], 4, 1, save);
             fwrite(strings[*c1], sizeof(char) * string_lengths[*c1], 1, save);
             fclose(save);
 

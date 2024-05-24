@@ -15,7 +15,8 @@ int flags_size = 0;
 /*
     Add new flag to the global array of flags
 */
-void add_flag(char* name, int name_length, int position) {
+void add_flag(char* name, int name_length, int position)
+{
     flags = realloc(flags, sizeof(flag) * (flags_size + 1));
     flags[flags_size].name_length = name_length;
     flags[flags_size].name = malloc(name_length);
@@ -27,7 +28,8 @@ void add_flag(char* name, int name_length, int position) {
 /*
     Change value of given flag
 */
-void set_flag(char* name, int name_length, int position) {
+void set_flag(char* name, int name_length, int position)
+{
     for (int i = 0; i < flags_size; i++) {
         if (memcmp(name, flags[i].name, name_length) == 0) {
             flags[i].position = position;
@@ -39,7 +41,8 @@ void set_flag(char* name, int name_length, int position) {
 /*
     Returns position of flag
 */
-int get_flag_position(char* name, int name_length) {
+int get_flag_position(char* name, int name_length)
+{
     for (int i = 0; i < flags_size; i++) {
         if (memcmp(name, flags[i].name, name_length) == 0) {
             return flags[i].position;

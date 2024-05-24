@@ -263,6 +263,10 @@ When using `save array X Y` X is the array to be saved and Y is the path to the 
 
 `load array X Y` works the same way, X is the destination array or string while Y is a path.
 
+Files are in a raw binary format, if the string is 5 characters long, the file will be a 5 byte long file with the said characters. Same goes with arrays, each integer is 4 bytes long.
+
+This implies that these operations can be used for binary file manipulation.
+
 ### Array and string operations
 
 #### Setting values of arrays and strings

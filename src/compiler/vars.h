@@ -18,8 +18,8 @@ int strings_length = 0;
 /*
     Returns ID of variable for bytecode use
 */
-int get_var_id(char* name, int length) {
-
+int get_var_id(char* name, int length)
+{
     for (int i = 0; i < variables_length; i++) {
         if (memcmp(vars[i].name, name, length) == 0) {
             return i;
@@ -39,8 +39,8 @@ int get_var_id(char* name, int length) {
 /*
     Returns ID of array for bytecode use
 */
-int get_arr_id(char* name, int length) {
-
+int get_arr_id(char* name, int length)
+{
     for (int i = 0; i < arrays_length; i++) {
         if (memcmp(arrs[i].name, name, length) == 0) {
             return i;
@@ -60,7 +60,8 @@ int get_arr_id(char* name, int length) {
 /*
     Returns ID of string for bytecode use
 */
-int get_str_id(char* name, int length) {
+int get_str_id(char* name, int length)
+{
     for (int i = 0; i < strings_length; i++) {
         if (memcmp(strs[i].name, name, length) == 0) {
             return i;

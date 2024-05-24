@@ -19,7 +19,8 @@ void insert_entrypoint(lines_list_t* lines);
 /*
     Exits program with provided error message
 */
-void error(const char* msg) {
+void error(const char* msg)
+{
     printf("%s\n", msg);
     exit(EXIT_FAILURE);
 }
@@ -28,7 +29,8 @@ void error(const char* msg) {
     Main function
     Reads input file and sends it for processing
 */
-int main(int argv, char** argc) {
+int main(int argv, char** argc)
+{
     if (argv < 3) {
         error("Provide sufficient amount of arguments!");
     }
@@ -72,7 +74,8 @@ int main(int argv, char** argc) {
 /*
     Converts a character to lowercase if it is uppercase
 */
-int tolower(int c) {
+int tolower(int c)
+{
     if (c >= 'A' && c <= 'Z') {
         return c + ('a' - 'A');
     } 
@@ -84,7 +87,8 @@ int tolower(int c) {
 /*
     Compares two strings case insensitively
 */
-bool case_insensitive_compare(const char* str1, const char* str2, int len1, int len2) {
+bool case_insensitive_compare(const char* str1, const char* str2, int len1, int len2)
+{
     if (len1 != len2) {
         return false;
     }
@@ -100,7 +104,8 @@ bool case_insensitive_compare(const char* str1, const char* str2, int len1, int 
 /*
     Replaces comments with whitespaces
 */
-void remove_comments(char* buffer, int length) {
+void remove_comments(char* buffer, int length)
+{
     for (int i = 0; i < length; i++) {
         if (buffer[i] == '#') {
             for (int j = i; j < length; j++) {
@@ -118,7 +123,8 @@ void remove_comments(char* buffer, int length) {
 /*
     Clears the buffer from unnecessary characters and returns its length
 */
-int clear_buffer(char* buffer, unsigned int length) {
+int clear_buffer(char* buffer, unsigned int length)
+{
     replace_char(buffer, length, '\t', ' ');
     replace_char(buffer, length, '\r', '\n');
 
@@ -160,7 +166,8 @@ int clear_buffer(char* buffer, unsigned int length) {
     Returns the lines array with usable structure
     Needs the buffer and its length as input
 */
-lines_list_t parse_lines(char* buffer, unsigned int length) {
+lines_list_t parse_lines(char* buffer, unsigned int length)
+{
 
     lines_list_t ret;
 
@@ -213,7 +220,8 @@ lines_list_t parse_lines(char* buffer, unsigned int length) {
 /*
     Finds the end of given loop or if statement
 */
-int find_end(lines_list_t* lines, int position) {
+int find_end(lines_list_t* lines, int position)
+{
     int newifs = 1;
     int seek_position = position + 1;
 
@@ -238,7 +246,8 @@ int find_end(lines_list_t* lines, int position) {
 /*
     Inserts "jump main" to the beginning of the code
 */
-void insert_entrypoint(lines_list_t* lines) {
+void insert_entrypoint(lines_list_t* lines)
+{
     line_t entryline;
     entryline.length = 2;
     entryline.data = malloc(sizeof(token_t) * 2);
@@ -257,7 +266,8 @@ void insert_entrypoint(lines_list_t* lines) {
 /*
     Converts higher level functionalities to compilable code
 */
-void precompile(lines_list_t* lines) {
+void precompile(lines_list_t* lines)
+{
     for (int i = 0; i < lines->length; i++) {
 
         int token_length = lines->data[i].data[0].length;
@@ -311,7 +321,8 @@ void precompile(lines_list_t* lines) {
 /*
     Loads flags into global array
 */
-void process_flags(lines_list_t* lines) {
+void process_flags(lines_list_t* lines)
+{
     for (int i = 0; i < lines->length; i++) {
         int token_length = lines->data[i].data[0].length;
         char token[token_length];
@@ -331,7 +342,8 @@ void process_flags(lines_list_t* lines) {
 /*
     Goes through lines one-by-one and sends them for handling
 */
-void process_code(lines_list_t* lines) {
+void process_code(lines_list_t* lines)
+{
     for (int i = 0; i < lines->length; i++) {
         handle_line(&lines->data[i]);
     }
@@ -340,7 +352,8 @@ void process_code(lines_list_t* lines) {
 /*
     Prints lines_list_t type as readable code to stdout
 */
-void print_lines(lines_list_t* lines) {
+void print_lines(lines_list_t* lines)
+{
     for (int i = 0; i < lines->length; i++) {
         printf("%d (%d): ", i + 1, lines->data[i].length);
         for (int j = 0; j < lines->data[i].length; j++) {
@@ -356,8 +369,8 @@ void print_lines(lines_list_t* lines) {
 /*
     Handles given line
 */
-void handle_line(line_t* line) {
-
+void handle_line(line_t* line)
+{
     if (line->length == 3 && case_insensitive_compare("=", line->data[1].data, strlen("="), line->data[1].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             int args[2] = {get_var_id(line->data[0].data, line->data[0].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
