@@ -85,13 +85,13 @@ int findEnd()
 */
 int main(int argc, char** argv)
 {
-    /*if (argc < 2) {
+    if (argc < 2) {
         printf("Provide sufficient amount of arguments!\n");
         return 1;
-    }*/
+    }
 
     unsigned int length;
-    FILE* fptr = fopen(/*argv[1]*/"/home/fodor/Projects/keszeg3/sl", "rb");
+    FILE* fptr = fopen(argv[1], "rb");
     fseek(fptr, 0, SEEK_END);
     length = ftell(fptr);
     rewind(fptr);
