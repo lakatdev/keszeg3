@@ -934,4 +934,14 @@ void handle_line(line_t* line)
         int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_str_id(line->data[2].data, line->data[2].length)};
         add_instruction(STRSIZE, 8, add_int_arguments(args, 2));
     }
+    else if (case_insensitive_compare("sleep", line->data[0].data, strlen("sleep"), line->data[0].length)) {
+        if (is_number(line->data[1].data, line->data[1].length)) {
+            int args = to_int(insert_null(line->data[1].data, line->data[1].length));
+            add_instruction(SLEEP_N, 4, add_int_arguments(&args, 1));
+        }
+        else {
+            int args = get_var_id(line->data[1].data, line->data[1].length);
+            add_instruction(SLEEP_V, 4, add_int_arguments(&args, 1));
+        }
+    }
 }

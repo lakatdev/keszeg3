@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "../constants.h"
 
 #define STACK_SIZE 256
@@ -1089,6 +1090,16 @@ void execute(instruction* instruction)
                 strings[*c1] = NULL;
             }
 
+            break;
+        }
+        case (SLEEP_N): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            usleep(*c1 * 1000);
+            break;
+        }
+        case (SLEEP_V): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            usleep(variables[*c1] * 1000);
             break;
         }
     }
