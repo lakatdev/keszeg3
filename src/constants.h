@@ -117,4 +117,7 @@
 #define PUSHJUMP 0x48
 #define RET 0x49
 
+#define SLEEP_N 0x56
+#define SLEEP_V 0x57
+
 #endif

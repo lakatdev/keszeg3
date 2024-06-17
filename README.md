@@ -31,6 +31,7 @@ Keszeg is a programming language with simplicity and clarity in mind. It is desi
       - [Executing system commands](#executing-system-commands)
       - [while loops](#while-loops)
       - [Calling and returning from a subroutine](#calling-and-returning-from-a-subroutine)
+      - [Sleep](#sleep)
     - [Input/Output operations](#inputoutput-operations)
       - [Printing to the console](#printing-to-the-console)
       - [Receiving input from the console](#receiving-input-from-the-console)
@@ -226,6 +227,10 @@ While loops wotk the same as *if* conditions, except they repeat execution until
 When using `call example` the program execution continues at the specified subroutine (in this case "example") until that finishes, and then returns to where it was originally called from.
 
 `return` describes the end of a subroutine, after that the execution returns to where it was called from. If *main* is returned the program finishes.
+
+#### Sleep
+
+The `sleep X` instruction makes the thread sleep for X milliseconds. X can be a variable or a constant.
 
 ### Input/Output operations
 
