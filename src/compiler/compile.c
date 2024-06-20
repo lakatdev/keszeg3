@@ -258,7 +258,7 @@ void insert_entrypoint(lines_list_t* lines)
 
     entryline.data[1].data = malloc(4);
     entryline.data[1].length = 4;
-    memcpy(entryline.data[1].data, "main", 4);
+    memcpy(entryline.data[1].data, "MAIN", 4);
 
     insert_line(lines, 0, entryline);
 }

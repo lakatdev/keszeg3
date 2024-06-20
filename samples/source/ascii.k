@@ -1,4 +1,4 @@
-rout main
+rout MAIN
     index = 33
     while index < 127
         print ascii index

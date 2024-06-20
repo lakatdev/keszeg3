@@ -1,4 +1,4 @@
-rout main
+rout MAIN
     input $ number
     number = number * 10000
     sqrt = number

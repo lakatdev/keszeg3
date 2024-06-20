@@ -74,10 +74,10 @@ Code is written by giving the executor program instructions line by line. It is 
 
 ### Subroutines
 
-The program enters in the "main" subroutine and runs until it is returned. From there can other subroutines be called. These are not functions, they do not return any value. For example:
+The program enters in the "MAIN" subroutine and runs until it is returned. Please note that the "MAIN" subroutine must be written in all uppercase letters. This is a requirement of the language and not following this convention will result in the program malfunctioning. From there can other subroutines be called. These are not functions, they do not return any value. For example:
 
 ```
-rout main
+rout MAIN
     call other
 return
 
@@ -92,7 +92,7 @@ this prints "Hello World".
 In a line after the # character all text is ignored during compilation. These are comments.
 
 ```
-rout main
+rout MAIN
     i = 0
     # initialize loop
     while i < 100
@@ -226,7 +226,7 @@ While loops work the same as *if* conditions, except they repeat execution until
 
 When using `call example` the program execution continues at the specified subroutine (in this case "example") until that finishes, and then returns to where it was originally called from.
 
-`return` describes the end of a subroutine, after that the execution returns to where it was called from. If *main* is returned the program finishes.
+`return` describes the end of a subroutine, after that the execution returns to where it was called from. If *MAIN* is returned the program finishes.
 
 #### Sleep
 
@@ -302,7 +302,7 @@ The `cat X Y` instruction concatenates a constant Y string to theee string X. Y 
 Below is an example program to determine the maximum value of an array provided by the user using the console.
 
 ```
-rout main
+rout MAIN
     call receive_input
     call determine_max
     call output_result

@@ -1,4 +1,4 @@
-rout main
+rout MAIN
 	print const n:
 	input $ length
 
