@@ -966,11 +966,11 @@ void handle_line(line_t* line)
     else if (case_insensitive_compare("random", line->data[0].data, strlen("random"), line->data[0].length)) {
         if (is_number(line->data[2].data, line->data[2].length)) {
             int args[2] = {get_var_id(line->data[1].data, line->data[1].length), to_int(insert_null(line->data[2].data, line->data[2].length))};
-            add_instruction(RANDOM_N, 8, add_int_arguments(&args, 2));
+            add_instruction(RANDOM_N, 8, add_int_arguments(args, 2));
         }
         else {
             int args[2] = {get_var_id(line->data[1].data, line->data[1].length), get_var_id(line->data[2].data, line->data[2].length)};
-            add_instruction(RANDOM_V, 8, add_int_arguments(&args, 2));
+            add_instruction(RANDOM_V, 8, add_int_arguments(args, 2));
         }
     }
 }
