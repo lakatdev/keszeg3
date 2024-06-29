@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include "../constants.h"
 
 #define STACK_SIZE 256
@@ -123,6 +124,8 @@ int main(int argc, char** argv)
 
     arguments = malloc(length - sizeof(int) * 4 - *num_instructions * sizeof(instruction));
     memcpy(arguments, &buffer[sizeof(int) * 4 + *num_instructions * sizeof(instruction)], length - sizeof(int) * 4 - *num_instructions * sizeof(instruction));
+
+    srand(time(NULL));
 
     for (execution_state = 0; execution_state < *num_instructions; execution_state++) {
         execute(&instructions[execution_state]);
@@ -1100,6 +1103,20 @@ void execute(instruction* instruction)
         case (SLEEP_V): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
             usleep(variables[*c1] * 1000);
+            break;
+        }
+        case (RANDOM_N): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+
+            variables[*c1] = rand() % *c2;
+            break;
+        }
+        case (RANDOM_V): {
+            int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            int* c2 = parse_int_pointer(&arguments[instruction->args + 4]);
+
+            variables[*c1] = rand() % variables[*c2];
             break;
         }
     }

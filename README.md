@@ -298,6 +298,12 @@ To reset the sizes and empty the values, the `free mode X` instruction is to be 
 
 The `cat X Y` instruction concatenates a constant Y string to theee string X. Y is everything written after the space character after the X value, just like previously with paths and constant string prints.
 
+### Utility functions
+
+#### Random numbers
+
+The `random X Y` instruction generates a random integer value less than Y, where Y is either a variable or a constant number. The result is placed in the X integer variable. The seed of the random generator is set at the beginning of runtime.
+
 ## Example program
 Below is an example program to determine the maximum value of an array provided by the user using the console.
 

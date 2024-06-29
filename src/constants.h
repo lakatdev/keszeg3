@@ -120,4 +120,7 @@
 #define SLEEP_N 0x56
 #define SLEEP_V 0x57
 
+#define RANDOM_N 0x58
+#define RANDOM_V 0x59
+
 #endif
