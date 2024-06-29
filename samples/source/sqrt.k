@@ -1,4 +1,4 @@
-rout MAIN
+(rt MAIN
     input $ number
     number = number * 10000
     sqrt = number
@@ -18,4 +18,4 @@ rout MAIN
     print const .
     print $ disp
     print const \n
-return
+return)

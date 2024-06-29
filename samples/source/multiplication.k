@@ -1,4 +1,4 @@
-rout MAIN
+(rt MAIN
     print const x:
     input $ n1
 
@@ -8,4 +8,4 @@ rout MAIN
     n1 = n1 * n2
     print $ n1
     print const \n
-return
+return)

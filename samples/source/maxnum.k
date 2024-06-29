@@ -1,4 +1,4 @@
-rout MAIN
+(rt MAIN
 	print const n:
 	input $ length
 
@@ -26,4 +26,4 @@ rout MAIN
 	print const max:
 	print $ max
 	print const \n
-return
+return)

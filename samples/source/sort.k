@@ -1,4 +1,4 @@
-rout MAIN
+(rt MAIN
     print const n:
     input $ length
 
@@ -44,4 +44,4 @@ rout MAIN
     end
 
     print const \n
-return
+return)

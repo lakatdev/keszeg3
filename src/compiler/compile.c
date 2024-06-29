@@ -26,6 +26,14 @@ void error(const char* msg)
 }
 
 /*
+    Logs message to stdout
+*/
+void debug(const char* msg)
+{
+    printf("[KESZEGC] %s\n", msg);
+}
+
+/*
     Main function
     Reads input file and sends it for processing
 */
@@ -34,6 +42,9 @@ int main(int argv, char** argc)
     if (argv < 3) {
         error("Provide sufficient amount of arguments!");
     }
+
+    debug("Starting compilation");
+    debug("Reading input file");
 
     FILE* fptr = fopen(argc[1], "r");
     fseek(fptr, 0, SEEK_END);
@@ -56,8 +67,10 @@ int main(int argv, char** argc)
     process_flags(&lines);
     process_code(&lines);
 
+    debug("Merging instructions and arguments");
     merge();
 
+    debug("Writing output file");
     FILE* save = fopen(argc[2], "wb");
     fwrite(&lines.length, 4, 1, save);
     fwrite(&variables_length, 4, 1, save);
@@ -106,6 +119,7 @@ bool case_insensitive_compare(const char* str1, const char* str2, int len1, int 
 */
 void remove_comments(char* buffer, int length)
 {
+    debug("Removing comments");
     for (int i = 0; i < length; i++) {
         if (buffer[i] == '#') {
             for (int j = i; j < length; j++) {
@@ -168,7 +182,7 @@ int clear_buffer(char* buffer, unsigned int length)
 */
 lines_list_t parse_lines(char* buffer, unsigned int length)
 {
-
+    debug("Parsing lines");
     lines_list_t ret;
 
     int lines_count = count_chars(buffer, length, '\n') + 1;
@@ -177,6 +191,7 @@ lines_list_t parse_lines(char* buffer, unsigned int length)
     line_t* lines = malloc(sizeof(line_t) * lines_count);
 
     for (int i = 0; i < lines_count; i++) {
+
         int line_end = get_char_pos(buffer, length, '\n', i);
 
         int line_length = line_end - last_line_end;
@@ -248,6 +263,7 @@ int find_end(lines_list_t* lines, int position)
 */
 void insert_entrypoint(lines_list_t* lines)
 {
+    debug("Inserting entrypoint");
     line_t entryline;
     entryline.length = 2;
     entryline.data = malloc(sizeof(token_t) * 2);
@@ -268,6 +284,7 @@ void insert_entrypoint(lines_list_t* lines)
 */
 void precompile(lines_list_t* lines)
 {
+    debug("Precompiling");
     for (int i = 0; i < lines->length; i++) {
 
         int token_length = lines->data[i].data[0].length;
@@ -309,7 +326,7 @@ void precompile(lines_list_t* lines)
 
             precompile(lines);
         }
-        else if (case_insensitive_compare("rout", token, strlen("rout"), token_length)) {
+        else if (case_insensitive_compare("(rt", token, strlen("(rt"), token_length)) {
             lines->data[i].data[0].data = realloc(lines->data[i].data[0].data, 4);
             memcpy(lines->data[i].data[0].data, "flag", 4);
             lines->data[i].data[0].length = 4;
@@ -323,6 +340,7 @@ void precompile(lines_list_t* lines)
 */
 void process_flags(lines_list_t* lines)
 {
+    debug("Processing flags");
     for (int i = 0; i < lines->length; i++) {
         int token_length = lines->data[i].data[0].length;
         char token[token_length];
@@ -344,6 +362,7 @@ void process_flags(lines_list_t* lines)
 */
 void process_code(lines_list_t* lines)
 {
+    debug("Processing code");
     for (int i = 0; i < lines->length; i++) {
         handle_line(&lines->data[i]);
     }
@@ -869,7 +888,7 @@ void handle_line(line_t* line)
         int args = get_flag_position(line->data[1].data, line->data[1].length);
         add_instruction(PUSHJUMP, 4, add_int_arguments(&args, 1));
     }
-    else if (case_insensitive_compare("return", line->data[0].data, strlen("return"), line->data[0].length)) {
+    else if (case_insensitive_compare("return)", line->data[0].data, strlen("return)"), line->data[0].length)) {
         add_instruction(RET, 0, 0);
     }
     else if (case_insensitive_compare("arrsize", line->data[0].data, strlen("arrsize"), line->data[0].length)) {

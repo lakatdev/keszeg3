@@ -77,13 +77,13 @@ Code is written by giving the executor program instructions line by line. It is 
 The program enters in the "MAIN" subroutine and runs until it is returned. Please note that the "MAIN" subroutine must be written in all uppercase letters. This is a requirement of the language and not following this convention will result in the program malfunctioning. From there can other subroutines be called. These are not functions, they do not return any value. For example:
 
 ```
-rout MAIN
+(rt MAIN
     call other
-return
+return)
 
-rout other
+(rt other
     print const Hello World\n
-return
+return)
 ```
 
 this prints "Hello World".
@@ -92,7 +92,7 @@ this prints "Hello World".
 In a line after the # character all text is ignored during compilation. These are comments.
 
 ```
-rout MAIN
+(rt MAIN
     i = 0
     # initialize loop
     while i < 100
@@ -100,7 +100,7 @@ rout MAIN
         print const \n   # print new line character
         i +=             # increase the iterator variable
     end
-return
+return)
 ```
 
 ### Escaped characters
@@ -222,11 +222,11 @@ While loops work the same as *if* conditions, except they repeat execution until
 
 #### Calling and returning from a subroutine
 
-`rout example` declares a subroutine called "example". The instructions between this, and the corresponding `return` are the body of the subroutine.
+`(rt example` declares a subroutine called "example". The instructions between this, and the corresponding `return)` are the body of the subroutine.
 
 When using `call example` the program execution continues at the specified subroutine (in this case "example") until that finishes, and then returns to where it was originally called from.
 
-`return` describes the end of a subroutine, after that the execution returns to where it was called from. If *MAIN* is returned the program finishes.
+`return)` describes the end of a subroutine, after that the execution returns to where it was called from. If *MAIN* is returned the program finishes.
 
 #### Sleep
 
@@ -302,13 +302,13 @@ The `cat X Y` instruction concatenates a constant Y string to theee string X. Y 
 Below is an example program to determine the maximum value of an array provided by the user using the console.
 
 ```
-rout MAIN
+(rt MAIN
     call receive_input
     call determine_max
     call output_result
-return
+return)
 
-rout receive_input
+(rt receive_input
     print const n:
     input $ length
 
@@ -322,9 +322,9 @@ rout receive_input
         numbers : i <= tmp
         i +=
     end
-return
+return)
 
-rout determine_max
+(rt determine_max
 	max <= numbers : 0
 	i = 1
 	while i < length
@@ -334,13 +334,13 @@ rout determine_max
 		end
 		i +=
 	end
-return
+return)
 
-rout output_result
+(rt output_result
     print const max:
     print $ max
     print const \n
-return
+return)
 ```
 
 The console will look like this (including the user input):
