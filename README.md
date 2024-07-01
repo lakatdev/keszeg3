@@ -38,6 +38,8 @@ Keszeg is a programming language with simplicity and clarity in mind. It is desi
       - [File I/O](#file-io)
     - [Array and string operations](#array-and-string-operations)
       - [Setting values of arrays and strings](#setting-values-of-arrays-and-strings)
+    - [Utility functions](#utility-functions)
+      - [Random numbers](#random-numbers)
   - [Example program](#example-program)
 
 
