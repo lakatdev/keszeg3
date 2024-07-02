@@ -611,6 +611,7 @@ void execute(instruction* instruction)
         }
         case (INPUT_ASCII): {
             int* c1 = parse_int_pointer(&arguments[instruction->args]);
+            variables[*c1] = 0;
             scanf(" %c", &variables[*c1]);
             break;
         }
